@@ -27,7 +27,6 @@ import UserProfile from '@/layouts/components/UserProfile.vue';
     <template #vertical-nav-header="{ toggleIsOverlayNavActive }">
       <NuxtLink to="/" class="app-logo">
         <img src="/logo.png" alt="Logo" width="130px" />
-        <div class="font-weight-medium leading-normal text-subtitle-2">Back Office</div>
       </NuxtLink>
 
       <IconBtn class="d-block d-lg-none" @click="toggleIsOverlayNavActive(false)">

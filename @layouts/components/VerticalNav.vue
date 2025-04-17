@@ -117,6 +117,7 @@ const handleNavScroll = (evt: Event) => {
   .nav-header {
     display: flex;
     align-items: center;
+    padding: 0.75rem 1rem !important;
 
     .header-action {
       cursor: pointer;
