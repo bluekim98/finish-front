@@ -18,12 +18,12 @@ const emit = defineEmits(['update:dialog', 'update:appLauncherIconKey', 'file-re
 
 const APP_ICON_PAGE_SIZE = 8;
 
-const appIconInfo = ref<CaribbeanApiResponseBody['/app/icon']['get']['items']>([]);
+const appIconInfo = ref<ApiResponseBody['/app/icon']['get']['items']>([]);
 
 const localDialog = ref(props.dialog);
 const localAppLauncherIconKey = ref(props.appLauncherIconKey);
 
-const defaultQuery: CaribbeanApiQueryParams['/app/icon']['get'] = {
+const defaultQuery: ApiQueryParams['/app/icon']['get'] = {
   keyword: undefined,
   page: 1,
   pageSize: APP_ICON_PAGE_SIZE,
@@ -33,13 +33,13 @@ const query = reactive({
 });
 const appIconTotalPages = ref(1);
 
-const selectAppIconItem = (item: CaribbeanApiResponseBody['/app/icon']['get']['items'][0]) => {
+const selectAppIconItem = (item: ApiResponseBody['/app/icon']['get']['items'][0]) => {
   localAppLauncherIconKey.value = item.headquarterAppLauncherIconKey;
   localDialog.value = false;
 };
 
 const fetchAppIconInfo = async () => {
-  const { data } = await makeCaribbeanClient().GET('/app/icon', {
+  const { data } = await makeApiClient().GET('/app/icon', {
     params: {
       query,
     },

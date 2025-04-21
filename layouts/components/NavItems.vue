@@ -25,21 +25,35 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   <!-- 프렌차이즈 관리 -->
   <VerticalNavSectionTitle
     :item="{
-      heading: '프랜차이즈 관리',
+      heading: '매장 관리',
     }"
   />
   <VerticalNavLink
     :item="{
-      title: 'FC 브랜드 관리',
+      title: '수강권 관리',
       icon: 'ri-table-view',
-      to: '/brands',
+      to: '/membership',
     }"
   />
   <VerticalNavLink
     :item="{
-      title: '매장운영자 전화번호 조회',
+      title: '회원 관리',
       icon: 'ri-table-view',
-      to: '/store/manager',
+      to: '/user',
+    }"
+  />
+  <VerticalNavLink
+    :item="{
+      title: '강사 관리',
+      icon: 'ri-table-view',
+      to: '/teacher',
+    }"
+  />
+  <VerticalNavLink
+    :item="{
+      title: '지점 관리',
+      icon: 'ri-table-view',
+      to: '/branch',
     }"
   />
 
@@ -54,13 +68,6 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       title: '어드민 관리',
       icon: 'ri-table-view',
       to: '/admin/user',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: '앱런쳐아이콘 관리',
-      icon: 'ri-table-view',
-      to: '/brands/appicon',
     }"
   />
 </template>

@@ -32,7 +32,7 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       '/dashboard': {
-        redirect: '/brands',
+        redirect: '/membership',
       },
     },
   },

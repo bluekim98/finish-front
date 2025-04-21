@@ -36,7 +36,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:dialog', 'close-dialog', 'refetch']);
 
-const defaultBody: CaribbeanApiPostRequestBody['/brand/{brandId}/middle-category'] = {
+const defaultBody: ApiPostRequestBody['/brand/{brandId}/middle-category'] = {
   middleGbn: props.middleCategoryCode,
   brandName: '',
   brandPath: undefined,
@@ -55,13 +55,11 @@ const body = reactive({
 
 const logoInfo = ref({
   pcLogoUri: '',
-  pcLogoAttachSeqId: undefined as CaribbeanApiPostRequestBody['/brand/{brandId}/middle-category']['pcLogoAttachSeqId'],
+  pcLogoAttachSeqId: undefined as ApiPostRequestBody['/brand/{brandId}/middle-category']['pcLogoAttachSeqId'],
   mobileLogoUri: '',
-  mobileLogoAttachSeqId:
-    undefined as CaribbeanApiPostRequestBody['/brand/{brandId}/middle-category']['mobileLogoAttachSeqId'],
+  mobileLogoAttachSeqId: undefined as ApiPostRequestBody['/brand/{brandId}/middle-category']['mobileLogoAttachSeqId'],
   faviconUri: '',
-  faviconAttachSeqId:
-    undefined as CaribbeanApiPostRequestBody['/brand/{brandId}/middle-category']['faviconAttachSeqId'],
+  faviconAttachSeqId: undefined as ApiPostRequestBody['/brand/{brandId}/middle-category']['faviconAttachSeqId'],
 });
 
 const isBrandNameOrBrandPathEmpty = computed(() => {
@@ -132,7 +130,7 @@ const handleRemoveInfo = (type: UploadFileTypes) => {
 };
 
 const uploadImage = async (file: File, type: UploadFileTypes) => {
-  const { data, error } = await makeCaribbeanClient().POST('/files/upload', {
+  const { data, error } = await makeApiClient().POST('/files/upload', {
     body: {
       file: '',
     },
@@ -175,7 +173,7 @@ const save = async () => {
     return;
   }
 
-  const { response, error } = await makeCaribbeanClient().POST('/brand/{brandId}/middle-category', {
+  const { response, error } = await makeApiClient().POST('/brand/{brandId}/middle-category', {
     params: {
       path: {
         brandId: props.brandId,

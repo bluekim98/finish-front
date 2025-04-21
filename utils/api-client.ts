@@ -1,7 +1,7 @@
 import createClient from 'openapi-fetch';
 import type { paths } from '~/types/api';
 
-export const makeCaribbeanClient = () => {
+export const makeApiClient = () => {
   const host = useRequestURL().host;
   const protocol = useRequestURL().protocol;
 

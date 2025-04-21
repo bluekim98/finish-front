@@ -16,8 +16,8 @@ export type UploadFileTypes = 'pcLogo' | 'mobileLogo' | 'favicon' | 'pcBg' | 'mo
 const route = useRoute();
 const brandId = Number(route.params.id);
 
-const brandInfo = ref<CaribbeanApiResponseBody['/brand/{brandId}']['get']>();
-const initialBrandInfo = ref<CaribbeanApiResponseBody['/brand/{brandId}']['get']>();
+const brandInfo = ref<ApiResponseBody['/brand/{brandId}']['get']>();
+const initialBrandInfo = ref<ApiResponseBody['/brand/{brandId}']['get']>();
 
 const isLoading = ref(true);
 const isResetClicked = ref(false);
@@ -52,13 +52,13 @@ const appLauncherIconKeyDialog = ref(false);
 const formRef = ref<VForm | null>(null);
 
 const activeTab = ref(0);
-const tabItems = ref<CaribbeanApiResponseBody['/brand/{brandId}']['get']['brandMiddleCategories']>([]);
+const tabItems = ref<ApiResponseBody['/brand/{brandId}']['get']['brandMiddleCategories']>([]);
 
 const { snacks, showSnackbar } = useSnackbar();
 
 const fetchBrandInfo = async () => {
   try {
-    const { data } = await makeCaribbeanClient().GET('/brand/{brandId}', {
+    const { data } = await makeApiClient().GET('/brand/{brandId}', {
       params: {
         path: {
           brandId,
@@ -91,7 +91,7 @@ const fetchBrandInfo = async () => {
 
 // TODO: undefined를 보내도록 wrapper 만드는 게 나을 듯
 const updateBrandInfo = async () => {
-  const { response, error } = await makeCaribbeanClient().PATCH('/brand/{brandId}', {
+  const { response, error } = await makeApiClient().PATCH('/brand/{brandId}', {
     params: {
       path: {
         brandId,
@@ -146,7 +146,7 @@ const updateBrandInfo = async () => {
 
 // TODO: 동일 함수 리팩토링 필요
 const uploadImage = async (file: File, type: UploadFileTypes) => {
-  const { data, error } = await makeCaribbeanClient().POST('/files/upload', {
+  const { data, error } = await makeApiClient().POST('/files/upload', {
     body: {
       file: '',
     },

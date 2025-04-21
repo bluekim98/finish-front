@@ -14,10 +14,10 @@ const props = defineProps({
   },
 });
 
-const convertibleList = ref<CaribbeanApiResponseBody['/brand/convertible']['get']['items']>([]);
+const convertibleList = ref<ApiResponseBody['/brand/convertible']['get']['items']>([]);
 const totalPages = ref(1);
 
-const defaultQuery: CaribbeanApiQueryParams['/brand/convertible']['get'] = {
+const defaultQuery: ApiQueryParams['/brand/convertible']['get'] = {
   page: 1,
   pageSize: 9,
   keyword: '',
@@ -38,7 +38,7 @@ const reset = () => {
 };
 
 const fetchConvertibleList = async () => {
-  const { data } = await makeCaribbeanClient().GET('/brand/convertible', {
+  const { data } = await makeApiClient().GET('/brand/convertible', {
     params: {
       query,
     },

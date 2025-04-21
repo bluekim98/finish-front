@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 
-const items = ref<CaribbeanApiResponseBody['/admin/user']['get']['items']>([]);
+const items = ref<ApiResponseBody['/admin/user']['get']['items']>([]);
 const totalPages = ref(1);
 
-const defaultQuery: CaribbeanApiQueryParams['/admin/user']['get'] = {
+const defaultQuery: ApiQueryParams['/admin/user']['get'] = {
   keyword: undefined,
   page: 1,
   pageSize: 10,
@@ -23,7 +23,7 @@ const reset = () => {
 };
 
 const fetchData = async () => {
-  const { data } = await makeCaribbeanClient().GET('/admin/user', {
+  const { data } = await makeApiClient().GET('/admin/user', {
     params: {
       query: {
         ...query,
@@ -35,10 +35,10 @@ const fetchData = async () => {
   totalPages.value = data?.pagination.totalPage || 1;
 };
 
-const updateUser = async (item: CaribbeanApiResponseBody['/admin/user']['get']['items'][number]) => {
+const updateUser = async (item: ApiResponseBody['/admin/user']['get']['items'][number]) => {
   uiState.progressMessage = '수정 작업중입니다';
   uiState.progress = true;
-  const { data } = await makeCaribbeanClient().PATCH('/admin/user/update', {
+  const { data } = await makeApiClient().PATCH('/admin/user/update', {
     body: {
       username: item.userName,
       useYn: item.useYn === 'Y' ? 'N' : 'Y',
@@ -49,12 +49,12 @@ const updateUser = async (item: CaribbeanApiResponseBody['/admin/user']['get']['
   uiState.progress = false;
 };
 
-const registUser = async (item: CaribbeanApiResponseBody['/admin/user/fresh-on-user']['get']['items'][number]) => {
+const registUser = async (item: ApiResponseBody['/admin/user/fresh-on-user']['get']['items'][number]) => {
   if (item.userId) {
     uiState.dialog = false;
     uiState.progressMessage = '등록 작업중입니다';
     uiState.progress = true;
-    const { data, error } = await makeCaribbeanClient().POST('/admin/user/register', {
+    const { data, error } = await makeApiClient().POST('/admin/user/register', {
       body: {
         username: item.userId,
       },
@@ -142,7 +142,7 @@ watch(
         "
         @register=""
       >
-        FreshOn 유저 외식업관리자 등록
+        어드민 등록
       </VBtn>
     </VRow>
 

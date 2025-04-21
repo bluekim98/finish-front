@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
 import RegisterMiddleCategorySearchForm from '@/components/brands/register-middle-category-search-form.vue';
 
-const defaultBody: CaribbeanApiPostRequestBody['/brand'] = {
-  brandName: '',
+const defaultBody: ApiPostRequestBody['/brand'] = {
+  membershipName: '',
   largeGbn: '',
   upperEstCd: '',
   serviceYn: 'N',
@@ -35,7 +35,7 @@ const closeSearchForm = () => {
   showMiddleCategorySearch.value = false;
 };
 
-const selectMiddleCategoryItem = (item: CaribbeanApiResponseBody['/brand/convertible']['get']['items'][number]) => {
+const selectMiddleCategoryItem = (item: ApiResponseBody['/brand/convertible']['get']['items'][number]) => {
   if (item.estCd) {
     body.largeGbn = item.estCd;
     body.upperEstCd = item.estCd;
@@ -110,7 +110,7 @@ const register = async () => {
 };
 
 const registerBasicInfo = async () => {
-  const { response, error } = await makeCaribbeanClient().POST('/brand', {
+  const { response, error } = await makeApiClient().POST('/brand', {
     body: {
       ...body,
       brandPath: body.brandPath === '' || body.brandPath == null ? undefined : body.brandPath,
@@ -197,19 +197,19 @@ watch(
               <div class="d-flex align-center" style="height: 70px">
                 <VRow no-gutters>
                   <VCol cols="12" md="3" class="d-flex align-center">
-                    <label for="brandName" class="font-weight-bold d-flex align-center gap-2">
-                      <span>브랜드명</span>
+                    <label for="membershipName" class="font-weight-bold d-flex align-center gap-2">
+                      <span>수강권명</span>
                       <span class="text-necessary pt-1">*</span>
                     </label>
                   </VCol>
                   <VCol cols="12" md="9">
                     <VTextField
-                      id="brandName"
-                      v-model="body.brandName"
-                      placeholder="브랜드명"
+                      id="membershipName"
+                      v-model="body.membershipName"
+                      placeholder="수강권명"
                       persistent-placeholder
                       clearable
-                      :rules="[(value: string) => !!value?.trim() || '브랜드명을 입력하세요']"
+                      :rules="[(value: string) => !!value?.trim() || '수강권명을 입력하세요']"
                     />
                   </VCol>
                 </VRow>
@@ -219,97 +219,70 @@ watch(
             <VCol md="12">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-center">
-                  <label for="largeGbn" class="font-weight-bold">
-                    <div>본사고객코드</div>
-                    <div>대분류</div>
+                  <label for="membershipName" class="font-weight-bold d-flex align-center gap-2">
+                    <span>지점</span>
+                    <span class="text-necessary pt-1">*</span>
                   </label>
                 </VCol>
                 <VCol cols="12" md="9">
                   <div class="d-flex align-center gap-2">
                     <VTextField
-                      id="largeGbn"
-                      v-model="body.largeGbn"
-                      placeholder="본사고객코드 - 대분류"
+                      id="membershipName"
+                      v-model="body.membershipName"
+                      placeholder="지점"
                       persistent-placeholder
-                      disabled
+                      clearable
+                      :rules="[(value: string) => !!value?.trim() || '지점을 입력하세요']"
                     />
                   </div>
                 </VCol>
               </VRow>
-            </VCol>
-
-            <VCol md="12">
-              <div class="d-flex align-center" style="height: 70px">
-                <VRow no-gutters>
-                  <VCol cols="12" md="3" class="d-flex align-center">
-                    <label for="upperEstCd" class="font-weight-bold d-flex align-center gap-2">
-                      <div>
-                        <div>본사고객코드</div>
-                        <div>본점고객코드</div>
-                      </div>
-                      <span class="text-necessary pt-1">*</span>
-                    </label>
-                  </VCol>
-                  <VCol cols="12" md="9">
-                    <VTextField
-                      id="upperEstCd"
-                      v-model="body.upperEstCd"
-                      placeholder="본사고객코드 - 본점고객코드"
-                      persistent-placeholder
-                      @click="showMiddleCategorySearch = true"
-                      readonly
-                      clearable
-                      :rules="[(value: string) => !!value?.trim() || '본사고객코드 본점고객코드를 입력하세요']"
-                    />
-                  </VCol>
-                </VRow>
-              </div>
             </VCol>
 
             <VCol md="12">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-center">
-                  <label for="serviceYn" class="font-weight-bold">서비스 대상 여부</label>
+                  <label for="membershipName" class="font-weight-bold d-flex align-center gap-2">
+                    <span>카테고리</span>
+                    <span class="text-necessary pt-1">*</span>
+                  </label>
                 </VCol>
                 <VCol cols="12" md="9">
-                  <VSelect label="서비스 대상 여부" v-model="body.serviceYn" :items="['Y', 'N']" placeholder="선택" />
-                </VCol>
-              </VRow>
-            </VCol>
-
-            <VCol v-if="body.serviceYn === 'Y'" md="12" class="pt-0">
-              <VRow no-gutters>
-                <VCol cols="3" />
-                <VCol>
-                  <div class="text-necessary">
-                    * 서비스대상여부가 ‘Y’로 설정할 경우, FreshOn 및 외식UP에 실시간 반영됩니다. 모든 정보가
-                    정상등록되었는지 꼭 확인해 주세요.
+                  <div class="d-flex align-center gap-2">
+                    <VTextField
+                      id="membershipName"
+                      v-model="body.membershipName"
+                      placeholder="카테고리"
+                      persistent-placeholder
+                      clearable
+                      :rules="[(value: string) => !!value?.trim() || '카테고리를 입력하세요']"
+                    />
                   </div>
                 </VCol>
               </VRow>
             </VCol>
 
-            <VCol md="12" class="d-flex flex-column gap-2">
-              <div class="d-flex align-center" style="height: 70px">
-                <VRow no-gutters>
-                  <VCol cols="12" md="3" class="d-flex align-center">
-                    <label for="openDate" class="font-weight-bold d-flex align-center gap-2">
-                      오픈 일시
-                      <span class="text-necessary pt-1">*</span>
-                    </label>
-                  </VCol>
-                  <VCol cols="12" md="9">
-                    <DatePicker
-                      id="openDate"
-                      v-model="body.openDateTime"
-                      :format="'yyyy-MM-dd HH:mm'"
-                      :min-date="dayjs(defaultBody.openDateTime).toDate()"
-                      enable-time-picker
-                      enable-minutes
+            <VCol md="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-center">
+                  <label for="membershipName" class="font-weight-bold d-flex align-center gap-2">
+                    <span>가격</span>
+                    <span class="text-necessary pt-1">*</span>
+                  </label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <div class="d-flex align-center gap-2">
+                    <VTextField
+                      id="membershipName"
+                      v-model="body.membershipName"
+                      placeholder="가격"
+                      persistent-placeholder
+                      clearable
+                      :rules="[(value: string) => !!value?.trim() || '가격을 입력하세요']"
                     />
-                  </VCol>
-                </VRow>
-              </div>
+                  </div>
+                </VCol>
+              </VRow>
             </VCol>
 
             <VCol md="12">
@@ -317,7 +290,7 @@ watch(
                 <VRow no-gutters>
                   <VCol md="3" class="d-flex align-center">
                     <label class="font-weight-bold d-flex align-center gap-2">
-                      전화번호 수집 기간
+                      운영 기간
                       <span class="text-necessary pt-1">*</span>
                     </label>
                   </VCol>
@@ -349,31 +322,20 @@ watch(
             <VCol md="12">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-center">
-                  <label for="brandPath" class="font-weight-bold d-flex align-center gap-2">Path</label>
+                  <label for="membershipName" class="font-weight-bold d-flex align-center gap-2">
+                    <span>강사명</span>
+                  </label>
                 </VCol>
                 <VCol cols="12" md="9">
-                  <VTextField
-                    ref="brandPathRef"
-                    id="brandPath"
-                    v-model="body.brandPath"
-                    placeholder="브랜드 Path"
-                    persistent-placeholder
-                    clearable
-                    @update:model-value="handleBrandPathInput"
-                  />
-                </VCol>
-                <VSnackbarQueue v-model="snacks" />
-              </VRow>
-            </VCol>
-
-            <VCol md="12" class="pt-0">
-              <VRow no-gutters>
-                <VCol cols="3" />
-                <VCol>
-                  <div class="text-secondary">
-                    path 생성 시 고객사 전용 주소로 제공합니다.
-                    <br />
-                    ex&#41; sfood 입력 시 -> www.oesikup.com/@sfood 로 제공
+                  <div class="d-flex align-center gap-2">
+                    <VTextField
+                      id="membershipName"
+                      v-model="body.membershipName"
+                      placeholder="강사명"
+                      persistent-placeholder
+                      clearable
+                      :rules="[(value: string) => !!value?.trim() || '강사명을 입력하세요']"
+                    />
                   </div>
                 </VCol>
               </VRow>

@@ -71,15 +71,13 @@ watch(localSelectedCode, (newSelectedCode) => {
   emit('update:selectedCode', newSelectedCode);
 });
 
-const middleCategoryList = ref<
-  CaribbeanApiResponseBody['/brand/{brandId}/convertible-middle-category']['get']['items']
->([]);
+const middleCategoryList = ref<ApiResponseBody['/brand/{brandId}/convertible-middle-category']['get']['items']>([]);
 const totalPages = ref(1);
 const isLoading = ref(true);
 
 const PAGE_SIZE = 4;
 
-const defaultQuery: CaribbeanApiQueryParams['/brand/{brandId}/convertible-middle-category']['get'] = {
+const defaultQuery: ApiQueryParams['/brand/{brandId}/convertible-middle-category']['get'] = {
   page: 1,
   pageSize: PAGE_SIZE,
   keyword: '',
@@ -108,7 +106,7 @@ const handleBrandBISeparationClick = () => {
   fetchMiddleCategoryInfo();
 };
 
-const handleMiddleCategorySelect = (item: CaribbeanApiResponseBody['/brand/convertible']['get']['items'][number]) => {
+const handleMiddleCategorySelect = (item: ApiResponseBody['/brand/convertible']['get']['items'][number]) => {
   if (localSelectedCode.value === item.estCd) {
     localSelectedCode.value = '';
 
@@ -121,7 +119,7 @@ const handleMiddleCategorySelect = (item: CaribbeanApiResponseBody['/brand/conve
 
 const fetchMiddleCategoryInfo = async () => {
   try {
-    const { data } = await makeCaribbeanClient().GET('/brand/{brandId}/convertible-middle-category', {
+    const { data } = await makeApiClient().GET('/brand/{brandId}/convertible-middle-category', {
       params: {
         path: {
           brandId: props.brandId,

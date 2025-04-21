@@ -24,8 +24,8 @@ const props = defineProps({
 
 const emit = defineEmits(['refetch']);
 
-const middleCategoryInfo = ref<CaribbeanApiResponseBody['/brand/middle-category/{id}']['get']>();
-const initialMiddleCategoryInfo = ref<CaribbeanApiResponseBody['/brand/middle-category/{id}']['get']>();
+const middleCategoryInfo = ref<ApiResponseBody['/brand/middle-category/{id}']['get']>();
+const initialMiddleCategoryInfo = ref<ApiResponseBody['/brand/middle-category/{id}']['get']>();
 
 const isLoading = ref(true);
 const isResetClicked = ref(false);
@@ -131,7 +131,7 @@ const updateMiddleCategoryInfo = async () => {
   }
   console.log('123');
 
-  const { response, error } = await makeCaribbeanClient().PATCH('/brand/middle-category/{id}', {
+  const { response, error } = await makeApiClient().PATCH('/brand/middle-category/{id}', {
     params: {
       path: {
         id: props.id,
@@ -198,7 +198,7 @@ const deleteMiddleCategory = async () => {
       }
 
       try {
-        const { response } = await makeCaribbeanClient().DELETE('/brand/middle-category/{id}', {
+        const { response } = await makeApiClient().DELETE('/brand/middle-category/{id}', {
           params: {
             path: {
               id: props.id,
@@ -234,7 +234,7 @@ const fetchMiddleCategoryInfo = async () => {
   }
 
   try {
-    const { data } = await makeCaribbeanClient().GET('/brand/middle-category/{id}', {
+    const { data } = await makeApiClient().GET('/brand/middle-category/{id}', {
       params: {
         path: {
           id: props.id,
@@ -267,7 +267,7 @@ const fetchMiddleCategoryInfo = async () => {
 
 // TODO: 동일 함수 리팩토링 필요
 const uploadImage = async (file: File, type: UploadFileTypes) => {
-  const { data, error } = await makeCaribbeanClient().POST('/files/upload', {
+  const { data, error } = await makeApiClient().POST('/files/upload', {
     body: {
       file: '',
     },

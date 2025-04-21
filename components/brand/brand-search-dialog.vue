@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { CaribbeanApiQueryParams, CaribbeanApiResponseBody } from '~/utils/api-types';
+import type { ApiQueryParams, ApiResponseBody } from '~/utils/api-types';
 
 const props = defineProps<{
   modelValue: boolean;
 }>();
 
-const defaultSearchCondition: CaribbeanApiQueryParams['/brand/convertible']['get'] = {
+const defaultSearchCondition: ApiQueryParams['/brand/convertible']['get'] = {
   keyword: '',
   page: 1,
   pageSize: 5,
@@ -13,11 +13,11 @@ const defaultSearchCondition: CaribbeanApiQueryParams['/brand/convertible']['get
 };
 
 const query = reactive({ ...defaultSearchCondition });
-const items = ref<CaribbeanApiResponseBody['/brand/convertible']['get']['items']>([]);
-const pagination = ref<CaribbeanApiResponseBody['/brand/convertible']['get']['pagination']>();
+const items = ref<ApiResponseBody['/brand/convertible']['get']['items']>([]);
+const pagination = ref<ApiResponseBody['/brand/convertible']['get']['pagination']>();
 
 const fetchData = async () => {
-  const { data } = await makeCaribbeanClient().GET('/brand/convertible', {
+  const { data } = await makeApiClient().GET('/brand/convertible', {
     params: {
       query: query,
     },
@@ -30,7 +30,7 @@ const fetchData = async () => {
 
 const emit = defineEmits(['update:modelValue', 'select']);
 
-const selectBrand = (brand: CaribbeanApiResponseBody['/brand/convertible']['get']['items'][number]) => {
+const selectBrand = (brand: ApiResponseBody['/brand/convertible']['get']['items'][number]) => {
   emit('select', brand); // 선택한 브랜드 전달
   emit('update:modelValue', false); // 다이얼로그 닫기
 };

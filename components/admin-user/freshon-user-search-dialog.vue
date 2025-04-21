@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { CaribbeanApiQueryParams, CaribbeanApiResponseBody } from '~/utils/api-types';
+import type { ApiQueryParams, ApiResponseBody } from '~/utils/api-types';
 
 const props = defineProps<{
   modelValue: boolean;
 }>();
 
-const defaultSearchCondition: CaribbeanApiQueryParams['/admin/user/fresh-on-user']['get'] = {
+const defaultSearchCondition: ApiQueryParams['/admin/user/fresh-on-user']['get'] = {
   keyword: '',
   page: 1,
   pageSize: 6,
 };
 
 const query = reactive({ ...defaultSearchCondition });
-const items = ref<CaribbeanApiResponseBody['/admin/user/fresh-on-user']['get']['items']>([]);
-const pagination = ref<CaribbeanApiResponseBody['/admin/user/fresh-on-user']['get']['pagination']>();
+const items = ref<ApiResponseBody['/admin/user/fresh-on-user']['get']['items']>([]);
+const pagination = ref<ApiResponseBody['/admin/user/fresh-on-user']['get']['pagination']>();
 
 const fetchData = async () => {
-  const { data } = await makeCaribbeanClient().GET('/admin/user/fresh-on-user', {
+  const { data } = await makeApiClient().GET('/admin/user/fresh-on-user', {
     params: {
       query: query,
     },
@@ -30,7 +30,7 @@ const selectedRow = ref(null);
 
 const emit = defineEmits(['update:modelValue', 'register']);
 
-const registerAdmin = (item: CaribbeanApiResponseBody['/admin/user/fresh-on-user']['get']['items'][number]) => {
+const registerAdmin = (item: ApiResponseBody['/admin/user/fresh-on-user']['get']['items'][number]) => {
   emit('register', item); // 선택한 브랜드 전달
 };
 fetchData();
