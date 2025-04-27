@@ -42,20 +42,6 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       to: '/user',
     }"
   />
-  <VerticalNavLink
-    :item="{
-      title: '강사 관리',
-      icon: 'ri-table-view',
-      to: '/teacher',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: '지점 관리',
-      icon: 'ri-table-view',
-      to: '/branch',
-    }"
-  />
 
   <!-- 시스템 관리 -->
   <VerticalNavSectionTitle
