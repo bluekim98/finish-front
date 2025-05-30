@@ -30,7 +30,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   />
   <VerticalNavLink
     :item="{
-      title: '수강권 관리',
+      title: '멤버십 관리',
       icon: 'ri-table-view',
       to: '/membership',
     }"

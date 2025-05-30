@@ -3,6 +3,10 @@ description:
 globs: 
 alwaysApply: false
 ---
+---
+alwaysApply: true
+---
+
 # Project Rules
 
 ## Overview
@@ -20,47 +24,62 @@ This project is a backoffice application for managing data related to a screen g
 
 -   **Framework:** Nuxt 3
 -   **UI Library:** Vuetify
--   **Language:** TypeScript (implied by Nuxt 3 and common practices)
+-   **Language:** TypeScript
 
 ## Development Status
 
 -   Currently in the screen design and layout phase.
 -   API integration for most features is not yet implemented.
--   The immediate next step after foundational analysis is to proceed with comprehensive UX/UI development.
 
-## UI/UX Guidelines
+## Development Guidelines
 
-### General Principles
+### 1. Codebase Reference
+-   **Always refer to the existing codebase structure and patterns**, especially within:
+    -   `pages/admin/` and its related components.
+    -   `pages/membership/` and its related components/pages.
+-   Follow established patterns for page routing (see `layouts/`, `components/` and `pages/` structure).
 
--   **Consistency:** Maintain a consistent look and feel across all components and pages.
--   **Clarity:** Ensure that UI elements and interactions are intuitive and easy to understand.
--   **Efficiency:** Design workflows that allow users to complete tasks with minimal effort.
--   **Accessibility:** Adhere to basic accessibility standards (e.g., sufficient color contrast, keyboard navigation).
+### 2. UI Components & Data Display
+-   **Tables:** For displaying tabular data, use Vuetify's **`VTable` component**.
+-   **Pagination:** Combine `VTable` with the **`VPagination` component** for navigating through data sets.
+    -   *Reference Implementation:* `components/membership/MembershipList.vue`
+-   Leverage Vuetify's pre-built components as much as possible.
+-   Follow Vuetify's official documentation for component usage.
+-   Customize Vuetify themes and styles through Nuxt configuration.
 
-### Vuetify Usage
+### 3. State Management
+-   **Primary Approach:** Utilize **Nuxt 3's built-in state management capabilities** (e.g., `useState`, `ref`, `computed`, composables).
+-   **Initial Prototyping:** For UI design and prototyping, prioritize using **component-local state (`ref`, `computed`)** and static/inline dummy data.
+-   **Global State:** If global state or complex cross-component logic becomes necessary:
+    -   First, look for existing patterns within `pages/admin/` or `pages/membership/`.
+    -   Alternatively, discuss and decide on using `composables/` (e.g. `useCustomState()`) for such logic, following Nuxt 3 best practices.
+-   **Third-party Libraries:** **Avoid introducing external state management libraries (like Pinia, Vuex, etc.)** without explicit prior discussion and approval.
 
--   Leverage Vuetify's pre-built components as much as possible to ensure consistency and reduce development time.
--   Follow Vuetify's official documentation for component usage and best practices.
--   Customize Vuetify themes and styles through the Nuxt configuration (`vuetify.options.js` or similar) rather than overriding CSS directly where possible.
+### 4. TypeScript & Typing
+-   **Minimal Types for UI Design:** During the UI design phase (before API integration), use TypeScript types minimally.
+    -   Inline types, `any`, or simple component-local `interface` definitions are acceptable.
+-   **API-Driven Types:** The primary source for data types will be code generated from the API server specifications.
+    -   Therefore, **avoid creating extensive, separate global type definition files** (e.g., in a `/types` directory) at this stage.
+-   **Linting:** Linter checks and error reporting should **focus primarily on TypeScript (`.ts`) files**. For `.vue` files, TypeScript errors within `<script lang="ts">` blocks will be addressed, but template or style linting is out of scope for AI assistance unless specifically requested.
 
-### Component Design & Naming
+### 5. Component Design & Naming
+-   **File Naming:** Vue component files: **PascalCase** (e.g., `UserProfileCard.vue`).
+-   **Props Naming:** Prop names: **camelCase** (e.g., `userName`).
+-   **Events Naming:** Custom event names: **kebab-case** (e.g., `item-selected`).
+-   **Modularity & Reusability:** Design components to be modular and reusable.
+-   **Directory Structure (Example):**
+    -   `components/global/`: Globally registered components.
+    -   `components/ui/`: General UI elements.
+    -   `components/[feature]/`: Feature-specific components (e.g., `components/membership/MembershipTable.vue`).
+    -   *Refer to existing `components/` structure for guidance.*
 
--   **File Naming:** Vue component files should be named using **PascalCase**. (e.g., `UserProfileCard.vue`, `DataFilterControls.vue`).
--   **Component Naming (in `<script setup>`):** While not always explicitly named in `<script setup>`, when referring to components in templates, they are also PascalCase (e.g., `<UserProfileCard />`).
--   **Props Naming:** Prop names should use **camelCase** (e.g., `userName`, `isActive`).
--   **Events Naming:** Custom event names should use **kebab-case** (e.g., `item-selected`, `update:modelValue`).
--   **Modularity & Reusability:** Design components to be modular and reusable across different parts of the application.
--   **Single Responsibility:** Each component should ideally have a single responsibility.
--   **Slots:** Utilize slots for content distribution to make components more flexible.
+### 6. Styling
+-   Use Vuetify's utility classes for common styling needs.
+-   For custom styles, prefer scoped CSS (`<style scoped>`).
+-   Define consistent color palettes and typography via Vuetify's theming.
 
-### Directory Structure (Example for Components)
-
--   `components/global/`: For globally registered components (e.g., base buttons, inputs).
--   `components/ui/`: For general UI elements not specific to a feature.
--   `components/[feature]/`: For components specific to a particular feature or page (e.g., `components/membership/MembershipTable.vue`).
-
-### Styling
-
--   Use Vuetify's utility classes for common styling needs (spacing, typography, colors).
--   For custom styles, prefer scoped CSS within Vue components (`<style scoped>`).
--   Define a consistent color palette and typography scale, ideally configured through Vuetify's theming system.
+## General Principles
+-   **Consistency:** Maintain a consistent look and feel.
+-   **Clarity:** Ensure UI is intuitive.
+-   **Efficiency:** Design for minimal user effort.
+-   **Accessibility:** Adhere to basic accessibility standards.

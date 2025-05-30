@@ -2,9 +2,9 @@
   <VContainer>
     <!-- 상단 타이틀 + 등록 버튼 -->
     <VRow align="center" justify="space-between" class="mb-6">
-      <VCol cols="auto" class="text-h5 font-weight-bold">수강권 관리</VCol>
+      <VCol cols="auto" class="text-h5 font-weight-bold">멤버십 관리</VCol>
       <VCol cols="auto">
-        <VBtn color="primary" @click="openRegisterModal">수강권 등록</VBtn>
+        <VBtn color="primary" @click="openRegisterModal">{{ modalTitle }} 등록</VBtn>
       </VCol>
     </VRow>
 
@@ -37,7 +37,8 @@
       <VCard>
         <VCardTitle class="text-h6 font-weight-bold">{{ modalTitle }} 등록</VCardTitle>
         <VCardText>
-          <component :is="currentRegisterComponent" @close="closeRegisterModal" />
+          <component :is="currentRegisterComponent" @close="closeRegisterModal" v-if="currentRegisterComponent" />
+          <div v-else>등록 폼이 준비되지 않았습니다.</div>
         </VCardText>
       </VCard>
     </VDialog>
@@ -45,6 +46,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue';
+
+// 임시: 등록 폼 컴포넌트 (추후 실제 컴포넌트로 교체 필요)
+const MembershipRegisterForm = null;
+const InstructorRegisterForm = null;
+const BranchRegisterForm = null;
+
 const currentTab = ref('membership');
 const showRegisterModal = ref(false);
 

@@ -6,7 +6,7 @@
         <tr>
           <th class="text-left">지점명</th>
           <th class="text-left">주소</th>
-          <th class="text-center">상태</th>
+          <th class="text-left">상태</th>
           <th class="text-center">관리</th>
         </tr>
       </thead>
@@ -14,7 +14,7 @@
         <tr v-for="item in pagedBranches" :key="item.id">
           <td>{{ item.name }}</td>
           <td>{{ item.address }}</td>
-          <td>{{ item.status }}</td>
+          <td class="text-left">{{ item.status }}</td>
           <td class="action-buttons">
             <VBtn icon size="small" variant="text" color="primary" @click="openEditModal(item)">
               <VIcon>ri-edit-line</VIcon>

@@ -1,0 +1,82 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Membership Page Ontology
+
+This document defines the core entities, their attributes, and relationships relevant to the Membership Management (`/membership`) section of the backoffice application.
+
+## 1. Core Entities and Attributes
+
+### 1.1. Membership (수강권)
+
+A product offered to customers, allowing access to facility services. Displayed and managed primarily in `components/membership/MembershipList.vue`.
+
+-   **`id`**: `number` (Unique identifier)
+-   **`name`**: `string` (Name of the membership, e.g., "프리미엄 연습권")
+-   **`type`**: `'연습' | '레슨'` (Type of membership)
+    -   `'연습'`: Practice-only pass.
+    -   `'레슨'`: Pass that includes lessons from a designated instructor.
+-   **`durationValue`**: `number` (Numerical value of the duration, e.g., 3, 30)
+-   **`durationUnit`**: `'일' | '개월' | '회'` (Unit for the duration)
+-   **`price`**: `number` (Price in KRW)
+-   **`status`**: `'활성' | '비활성'` (Current status of the membership product offering)
+-   **`description`**: `string` (Optional description of the membership)
+-   **`instructorId`**: `number | null` (ID of the assigned instructor. Rules depend on `type`. See Section 2.1)
+-   **`branchId`**: `number | null` (ID of the branch offering this membership. See Section 2.2)
+-   **`createdAt`**: `Date` (Timestamp of creation)
+-   **`updatedAt`**: `Date` (Timestamp of the last update)
+
+### 1.2. Instructor (강사)
+
+A staff member who provides lessons or is associated with the facility. Displayed and managed primarily in `components/membership/InstructorList.vue`.
+
+-   **`id`**: `number` (Unique identifier)
+-   **`name`**: `string` (Name of the instructor)
+-   **`specialty`**: `string` (Optional, area of expertise, e.g., "드라이버 교정")
+-   **`status`**: `'활동중' | '휴직' | '퇴사'` (Current employment status)
+-   **`careerInfo`**: `string` (Optional, summary of career or introduction)
+-   **`assignedBranches`**: `number[]` (Array of Branch IDs where the instructor is stationed. See Section 2.3)
+-   **`createdAt`**: `Date` (Timestamp of creation)
+-   **`updatedAt`**: `Date` (Timestamp of the last update)
+
+### 1.3. Branch (지점)
+
+A physical location of the screen golf facility. Displayed and managed primarily in `components/membership/BranchList.vue`.
+
+-   **`id`**: `number` (Unique identifier)
+-   **`name`**: `string` (Name of the branch, e.g., "강남점")
+-   **`address`**: `string` (Physical address of the branch)
+-   **`status`**: `'운영중' | '폐점'` (Current operational status of the branch)
+
+## 2. Key Relationships and Business Rules
+
+### 2.1. Membership (수강권) & Instructor (강사)
+
+-   **From Membership perspective**: A `Membership` is linked to **one or zero** instructors via `Membership.instructorId`.
+-   **From Instructor perspective**: An `Instructor` can be the designated instructor for **multiple different** `Membership` products.
+-   **Business Rule based on `Membership.type`**:
+    -   If `Membership.type` is **`'레슨'`**: `Membership.instructorId` **must** be a valid Instructor ID (i.e., not `null`).
+    -   If `Membership.type` is **`'연습'`**: `Membership.instructorId` **must** be `null` (no instructor assigned).
+
+### 2.2. Membership (수강권) & Branch (지점)
+
+-   **From Membership perspective**: A `Membership` product is offered by (belongs to) **exactly one** `Branch` via `Membership.branchId`.
+-   **From Branch perspective**: A `Branch` can offer **multiple different** `Membership` products.
+-   **Business Rule**:
+    -   `Membership.branchId` **must** be a valid Branch ID for all membership types (i.e., not `null`).
+
+### 2.3. Instructor (강사) & Branch (지점)
+
+-   **Cardinality**: Many-to-Many.
+    -   An `Instructor` can be assigned to (stationed at) **multiple** `Branch`es, managed via the `Instructor.assignedBranches` array (which stores `Branch` IDs).
+    -   A `Branch` can have **multiple** `Instructor`s stationed at it (implied by `Instructor.assignedBranches`).
+
+## 3. UI and Data Management Notes
+
+-   **UI Components**: For displaying lists of these entities, `VTable` and `VPagination` are used, as specified in `project-rule.mdc`.
+-   **Data Source**: Currently, data for memberships, instructors, and branches is sourced from static dummy data arrays defined locally within their respective Vue components (`MembershipList.vue`, `InstructorList.vue`, `BranchList.vue`).
+-   **Type Definitions**: TypeScript types/interfaces for these entities are defined locally within the components for simplicity during the UI design phase.
+
+This ontology reflects the current understanding and implementation within the `/membership` pages.
