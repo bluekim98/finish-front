@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Rules
+
+## Overview
+
+This project is a backoffice application for managing data related to a screen golf facility's membership and reservation system. The primary goal is to provide an administrative interface for the main user-facing application.
+
+## Key Features (Current Scope)
+
+-   Screen design and layout implementation.
+-   Login, session, and cookie management are functional and integrated.
+-   API integration for core business logic is pending.
+-   Focus on establishing the foundational structure and UX/UI before full-scale development.
+
+## Technical Stack
+
+-   **Framework:** Nuxt 3
+-   **UI Library:** Vuetify
+-   **Language:** TypeScript (implied by Nuxt 3 and common practices)
+
+## Development Status
+
+-   Currently in the screen design and layout phase.
+-   API integration for most features is not yet implemented.
+-   The immediate next step after foundational analysis is to proceed with comprehensive UX/UI development.
+
+## UI/UX Guidelines
+
+### General Principles
+
+-   **Consistency:** Maintain a consistent look and feel across all components and pages.
+-   **Clarity:** Ensure that UI elements and interactions are intuitive and easy to understand.
+-   **Efficiency:** Design workflows that allow users to complete tasks with minimal effort.
+-   **Accessibility:** Adhere to basic accessibility standards (e.g., sufficient color contrast, keyboard navigation).
+
+### Vuetify Usage
+
+-   Leverage Vuetify's pre-built components as much as possible to ensure consistency and reduce development time.
+-   Follow Vuetify's official documentation for component usage and best practices.
+-   Customize Vuetify themes and styles through the Nuxt configuration (`vuetify.options.js` or similar) rather than overriding CSS directly where possible.
+
+### Component Design & Naming
+
+-   **File Naming:** Vue component files should be named using **PascalCase**. (e.g., `UserProfileCard.vue`, `DataFilterControls.vue`).
+-   **Component Naming (in `<script setup>`):** While not always explicitly named in `<script setup>`, when referring to components in templates, they are also PascalCase (e.g., `<UserProfileCard />`).
+-   **Props Naming:** Prop names should use **camelCase** (e.g., `userName`, `isActive`).
+-   **Events Naming:** Custom event names should use **kebab-case** (e.g., `item-selected`, `update:modelValue`).
+-   **Modularity & Reusability:** Design components to be modular and reusable across different parts of the application.
+-   **Single Responsibility:** Each component should ideally have a single responsibility.
+-   **Slots:** Utilize slots for content distribution to make components more flexible.
+
+### Directory Structure (Example for Components)
+
+-   `components/global/`: For globally registered components (e.g., base buttons, inputs).
+-   `components/ui/`: For general UI elements not specific to a feature.
+-   `components/[feature]/`: For components specific to a particular feature or page (e.g., `components/membership/MembershipTable.vue`).
+
+### Styling
+
+-   Use Vuetify's utility classes for common styling needs (spacing, typography, colors).
+-   For custom styles, prefer scoped CSS within Vue components (`<style scoped>`).
+-   Define a consistent color palette and typography scale, ideally configured through Vuetify's theming system.

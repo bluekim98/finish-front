@@ -1,0 +1,63 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Membership Management Page Ontology
+
+## Purpose
+
+This page is responsible for managing membership tickets or passes for the screen golf facility.
+
+## Key Entities & Attributes
+
+-   **Membership/Pass:**
+    -   `id` (Identifier)
+    -   `name` (e.g., "1-Month Pass", "10-Session Pack")
+    -   `type` (e.g., time-based, session-based)
+    -   `duration` (if time-based, e.g., 30 days, 90 days)
+    -   `session_count` (if session-based, e.g., 10, 20)
+    -   `price`
+    -   `status` (e.g., active, inactive, expired)
+    -   `description`
+    -   `created_at`
+    -   `updated_at`
+
+-   **User/Member (associated with a membership):**
+    -   `user_id` (links to the main user table)
+    -   `membership_id` (links to the membership/pass)
+    -   `purchase_date`
+    -   `start_date`
+    -   `expiry_date` (if applicable)
+    -   `remaining_sessions` (if applicable)
+    -   `status` (e.g., active, expired, used_up)
+
+## Core Functionalities (Expected)
+
+-   **List Memberships:** Display all available membership types/passes.
+    -   Filtering (by status, type)
+    -   Sorting (by name, price)
+    -   Pagination
+-   **Create New Membership Type:** Add a new kind of pass/membership.
+-   **Edit Membership Type:** Modify details of an existing membership type.
+-   **Delete Membership Type:** Remove a membership type (consider implications for existing users with this type).
+-   **View Users with a Specific Membership:** See a list of users who have purchased a particular membership type.
+-   **Manage User Memberships (Potentially on a separate user detail page or section):**
+    -   Assign a membership to a user.
+    -   View a user's current and past memberships.
+    -   Manually adjust expiry dates or remaining sessions (with audit trail).
+
+## UI Components (Based on Vuetify)
+
+-   `VDataTable` or `VList` for displaying membership types and user lists.
+-   `VForm` with `VTextField`, `VSelect`, `VTextarea`, `VCheckbox` for creating/editing membership types.
+-   `VDialog` or `VBottomSheet` for create/edit forms.
+-   `VBtn` for actions (create, edit, delete).
+-   `VChip` for status indicators.
+-   `VPagination` for lists.
+-   `VDatePicker` for date fields.
+
+## Navigation
+
+-   Accessed via "수강권 관리" in the main navigation.
+-   Path: `/membership`

@@ -35,13 +35,6 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       to: '/membership',
     }"
   />
-  <VerticalNavLink
-    :item="{
-      title: '회원 관리',
-      icon: 'ri-table-view',
-      to: '/user',
-    }"
-  />
 
   <!-- 시스템 관리 -->
   <VerticalNavSectionTitle
