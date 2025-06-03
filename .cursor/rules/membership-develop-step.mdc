@@ -1,0 +1,173 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Membership Management Development Steps
+
+## Current Status (완료된 작업)
+
+### Phase 1: Architecture & Foundation ✅
+- **Type Definitions** (`types/membership.ts`)
+  - 완전한 TypeScript 인터페이스 정의
+  - 고유번호, 티켓, 일정 엔티티 타입
+  - CRUD 요청/응답 타입
+  - 모달 상태 관리 타입
+
+- **State Management** (`composables/useMembership.ts`)
+  - Nuxt 3 내장 상태 관리 사용
+  - Mock 데이터 시스템 구축
+  - 고유번호 완전한 CRUD 작업
+  - 티켓/일정 Placeholder 함수들
+
+### Phase 2: Unique Code Management ✅
+- **Main Page** (`pages/membership.vue`)
+  - 4개 탭 인터페이스 (고유번호, 티켓, 일정, 연결관리)
+  - 완전한 레이아웃 구조
+
+- **UniqueCodeTab.vue** - 완전 구현
+  - 검색 기능 (제목, 설명 필터링)
+  - 페이지네이션 (10개씩)
+  - CRUD 작업 (생성, 수정, 삭제)
+  - 관계 검증 (연결된 티켓/일정 확인)
+  - 빈 상태 처리
+
+- **UniqueCodeModal.vue** - 완전 구현
+  - 생성/수정 모달
+  - 폼 유효성 검사
+  - 적절한 UI/UX
+
+### Phase 3: UI/UX Fixes ✅
+- **Icon System**: iconify ri- prefix 사용
+- **Modal Layout**: 제목 겹침 문제 해결
+- **Label Clipping**: VTextField 라벨 잘림 현상 해결
+- **Spacing**: 자연스러운 여백 조정
+
+---
+
+## Next Development Phase (다음 작업)
+
+### Phase 4: Ticket Management (우선순위 1)
+
+#### 4.1 Composable Logic Implementation
+**File**: `composables/useMembership.ts`
+
+```typescript
+// TODO: 티켓 CRUD 함수들 구현
+const createTicket = async (data: TicketCreateRequest): Promise<void>
+const updateTicket = async (id: number, data: TicketUpdateRequest): Promise<void>  
+const deleteTicket = async (id: number): Promise<void>
+const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[]
+```
+
+**Mock Data 확장**:
+- 다양한 티켓 타입 샘플 (횟수제, 기간제)
+- 복잡한 가격 정책 예시
+- 예약 시간대 설정 예시
+
+#### 4.2 TicketTab.vue Component
+**기능 요구사항**:
+- 티켓 목록 테이블 (VTable)
+- 타입별 필터링 (횟수제/기간제)
+- 가격 정보 표시
+- 연결된 고유번호 표시
+- 검색 기능 (제목, 설명)
+- 페이지네이션
+
+**Table Columns**:
+- ID, 제목, 타입, 가격, 연결된 고유번호, 유효기간, 액션
+
+#### 4.3 TicketModal.vue Component  
+**기능 요구사항**:
+- 동적 폼 (타입에 따른 필드 변경)
+- 횟수제: 사용 횟수, 유효기간
+- 기간제: 시작일, 종료일
+- 가격 정책 설정
+- 예약 가능 시간대 설정
+- 고유번호 연결 (다중 선택)
+
+### Phase 5: Schedule Management (우선순위 2)
+- ScheduleTab.vue 구현
+- ScheduleModal.vue 구현
+- 강사 관리 기능
+- 수용 인원 및 정책 설정
+
+### Phase 6: Connection Management (우선순위 3)
+- 엔티티 간 관계 시각화
+- 연결 관리 인터페이스
+- 관계 검증 및 제약사항 처리
+
+---
+
+## Development Guidelines
+
+### 기술적 접근법
+- **Mock Data First**: API 연동 전 완전한 기능 구현
+- **Progressive Enhancement**: 단계별 기능 확장
+- **Consistent Patterns**: 기존 UniqueCode 패턴 따르기
+
+### UI/UX 패턴 유지
+- **Table Structure**: VTable + VPagination 조합
+- **Modal Layout**: 적절한 padding (pa-6 pb-4, pa-6 pt-0)
+- **Icon Usage**: ri- prefix (Remix Icons)
+- **Button Colors**: primary, secondary, error 일관성
+- **Empty States**: 적절한 빈 상태 메시지
+
+### Component Structure
+```
+components/membership/
+├── TicketTab.vue          # 다음 구현 대상
+├── TicketModal.vue        # 다음 구현 대상
+├── ScheduleTab.vue        # Phase 5
+├── ScheduleModal.vue      # Phase 5
+├── ConnectionTab.vue      # Phase 6
+├── UniqueCodeTab.vue      # ✅ 완료
+└── UniqueCodeModal.vue    # ✅ 완료
+```
+
+### Code Quality
+- TypeScript strict mode 준수
+- 컴포넌트별 책임 분리
+- 재사용 가능한 패턴 유지
+- TODO 주석으로 API 연동 지점 표시
+
+---
+
+## API Integration Preparation
+
+### Future API Endpoints (예상)
+```
+GET    /api/tickets
+POST   /api/tickets
+PUT    /api/tickets/:id
+DELETE /api/tickets/:id
+GET    /api/tickets/by-unique-code/:id
+
+GET    /api/schedules  
+POST   /api/schedules
+PUT    /api/schedules/:id
+DELETE /api/schedules/:id
+```
+
+### Type Safety
+- API response 타입과 mock 데이터 타입 일치 유지
+- 런타임 데이터 검증 준비
+
+---
+
+## Testing Strategy (추후)
+- Component 단위 테스트
+- CRUD 기능 통합 테스트  
+- 관계 검증 로직 테스트
+- UI 상호작용 테스트
+
+---
+
+## Next Session Action Items
+
+1. **Immediate**: `TicketTab.vue` 구현 시작
+2. **Second**: `TicketModal.vue` 복잡한 폼 구현
+3. **Third**: 티켓 CRUD composable 로직 완성
+4. **Validation**: 기존 UniqueCode 패턴과의 일관성 검증
+
+**Key Focus**: 티켓의 복잡한 비즈니스 로직 (타입별 다른 필드, 가격 정책, 시간대 설정)을 사용자 친화적인 UI로 구현

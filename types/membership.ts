@@ -1,0 +1,199 @@
+// 멤버십 관리 시스템 타입 정의
+
+// ===========================================
+// 1. 고유번호 (Unique Code) - 티켓과 일정을 연결하는 매핑 엔티티
+// ===========================================
+
+export interface UniqueCode {
+  id: number
+  title: string // 필수: 고유번호의 제목
+  description?: string // 선택: 비고
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateUniqueCodeRequest {
+  title: string
+  description?: string
+}
+
+export interface UpdateUniqueCodeRequest extends CreateUniqueCodeRequest {
+  id: number
+}
+
+// ===========================================
+// 2. 티켓 (Ticket) - 회원이 구매하는 수강권 상품
+// ===========================================
+
+export type TicketType = '횟수제' | '기간제'
+
+export type ValidityPeriod = {
+  type: '1개월' | '2개월' | '3개월' | '6개월' | '1년' | '기타'
+  days: number // 30, 60, 90, 180, 365 또는 사용자 지정
+}
+
+export type UsageLimit = {
+  weekly: {
+    type: '제한없음' | '1회' | '2회' | '3회' | '4회' | '직접입력'
+    value?: number // 직접입력일 때 사용
+  }
+  monthly: {
+    type: '제한없음' | '5회' | '10회' | '15회' | '20회' | '직접입력'
+    value?: number // 직접입력일 때 사용
+  }
+}
+
+export type ReservationTime = {
+  type: '시간대지정' | '하루종일'
+  startTime?: string // 30분 단위 (09:00, 09:30, ...)
+  endTime?: string // 30분 단위
+}
+
+export interface Ticket {
+  id: number
+  type: TicketType // 필수: 횟수제 | 기간제
+  title: string // 필수: 수강권명
+  usageCount?: {
+    total?: number // 총 이용횟수
+    cancellable?: number // 취소가능 횟수
+  } // 횟수제인 경우 필수
+  validityPeriod: ValidityPeriod // 필수: 수강권 사용기한
+  maxParticipants: number | 'unlimited' // 필수: 수강 인원
+  price: number // 필수: 판매 가격 (원화)
+  usageLimit: UsageLimit // 필수: 이용 횟수 제한
+  reservationTime: ReservationTime // 필수: 예약 가능한 시간
+  uniqueCodeId: number // 필수: 연결된 고유번호 ID
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateTicketRequest {
+  type: TicketType
+  title: string
+  usageCount?: {
+    total?: number
+    cancellable?: number
+  }
+  validityPeriod: ValidityPeriod
+  maxParticipants: number | 'unlimited'
+  price: number
+  usageLimit: UsageLimit
+  reservationTime: ReservationTime
+  uniqueCodeId: number
+}
+
+export interface UpdateTicketRequest extends CreateTicketRequest {
+  id: number
+}
+
+// ===========================================
+// 3. 일정 (Schedule) - 실제 수업 및 이용 시간 정보
+// ===========================================
+
+export type ReservationCancelPolicy = {
+  enabled: boolean
+  absolute?: {
+    hours: number // 절대값 지정 (N시간 전까지)
+  }
+  relative?: {
+    type: 'before_start' | 'before_date'
+    value: number // 상대값 지정
+  }
+}
+
+export interface Schedule {
+  id: number
+  title: string // 필수: 일정명
+  instructor?: string // 선택: 담당강사
+  description: string // 필수: 일정설명
+  maxParticipants: number | 'unlimited' // 필수: 최대 인원
+  location?: string // 선택: 장소
+  period: {
+    startDate: string // 필수: 일정 시작일
+    endDate: string // 필수: 일정 종료일
+    weekdays?: string[] // 요일 지정 (선택)
+  }
+  time?: {
+    startTime: string // 시작시간
+    endTime: string // 종료시간
+  } // 선택: 하루 중 상세 시간
+  reservationCancelPolicy?: ReservationCancelPolicy // 선택: 예약/취소 가능 시간
+  uniqueCodeId: number // 필수: 연결된 고유번호 ID
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateScheduleRequest {
+  title: string
+  instructor?: string
+  description: string
+  maxParticipants: number | 'unlimited'
+  location?: string
+  period: {
+    startDate: string
+    endDate: string
+    weekdays?: string[]
+  }
+  time?: {
+    startTime: string
+    endTime: string
+  }
+  reservationCancelPolicy?: ReservationCancelPolicy
+  uniqueCodeId: number
+}
+
+export interface UpdateScheduleRequest extends CreateScheduleRequest {
+  id: number
+}
+
+// ===========================================
+// 4. 연결 관계 및 공통 타입
+// ===========================================
+
+export interface TicketScheduleMapping {
+  uniqueCodeId: number
+  ticketId: number
+  scheduleId: number
+  createdAt: string
+}
+
+// API 응답 타입
+export interface ApiResponse<T> {
+  data: T
+  message: string
+  status: number
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+// 폼 검증 관련
+export interface ValidationError {
+  field: string
+  message: string
+}
+
+// 테이블 정렬 및 필터링
+export interface TableOptions {
+  page: number
+  itemsPerPage: number
+  sortBy?: string
+  sortDesc?: boolean
+  search?: string
+}
+
+// 모달 상태
+export type ModalMode = 'create' | 'edit' | 'view'
+
+export interface ModalState<T> {
+  show: boolean
+  mode: ModalMode
+  item: T | null
+} 

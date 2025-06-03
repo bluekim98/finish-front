@@ -1,12 +1,8 @@
 ---
 description: 
 globs: 
-alwaysApply: false
----
----
 alwaysApply: true
 ---
-
 # Project Rules
 
 ## Overview
@@ -83,3 +79,84 @@ This project is a backoffice application for managing data related to a screen g
 -   **Clarity:** Ensure UI is intuitive.
 -   **Efficiency:** Design for minimal user effort.
 -   **Accessibility:** Adhere to basic accessibility standards.
+
+---
+
+## Data & API Integration Rules
+
+### 7. Data Management Strategy
+-   **Prototyping Phase:** Use **hardcoded/mock data** for rapid UI development and testing.
+    -   Example: `const mockData = [{ id: 1, title: 'Sample' }]`
+-   **Mock Data Location:** Keep mock data close to components or in dedicated mock files within feature directories.
+-   **Data Structure:** Ensure mock data structure matches expected API response format for easier transition.
+
+### 8. Business Logic Separation
+-   **Separation of Concerns:** Strictly separate business logic from UI rendering logic.
+    -   **UI Logic:** Component state, form handling, user interactions → Vue components
+    -   **Business Logic:** Data processing, API calls, validation → Composables
+-   **Composables Pattern:** Use Nuxt 3 composables for reusable business logic.
+    ```typescript
+    // composables/useFeature.ts
+    export const useFeature = () => {
+      const data = useState('feature-data', () => [])
+      
+      const processData = () => { /* business logic */ }
+      const validateForm = () => { /* validation logic */ }
+      
+      return { data, processData, validateForm }
+    }
+    ```
+
+### 9. Type Management for API Integration
+-   **Dedicated Type Files:** Create separate type definition files in `types/` directory for API data structures.
+-   **API-Ready Types:** Design types to be compatible with future API server integration.
+    ```typescript
+    // types/feature.ts
+    export interface ApiResponse<T> {
+      data: T
+      message: string
+      status: number
+    }
+    
+    export interface FeatureItem {
+      id: number
+      title: string
+      createdAt: string
+      updatedAt: string
+    }
+    ```
+-   **Import Pattern:** Import types consistently across the application.
+    ```typescript
+    import type { FeatureItem } from '~/types/feature'
+    ```
+
+### 10. Development Architecture
+-   **Layered Structure:** Follow consistent file organization for features:
+    ```
+    types/[feature].ts           → Type definitions
+    composables/use[Feature].ts  → Business logic & state management
+    components/[feature]/        → UI components
+    pages/[feature]/            → Route pages
+    ```
+-   **Future API Integration:** Structure code to easily replace mock data with API calls:
+    ```typescript
+    // composables/useFeature.ts
+    const fetchData = async () => {
+      // TODO: Replace with actual API call
+      return mockData
+    }
+    ```
+
+### 11. Form Validation & Complex Logic
+-   **Conditional Validation:** Handle complex validation rules within composables.
+-   **Form State Management:** Use Nuxt's reactive state for form handling.
+-   **Error Handling:** Prepare error handling structure for future API integration.
+    ```typescript
+    const { data, error, pending } = await $fetch('/api/endpoint')
+    ```
+
+### 12. Development Best Practices
+-   **Progressive Enhancement:** Build features incrementally (mock → logic → API).
+-   **Code Comments:** Mark sections that need API integration with `// TODO: API integration`.
+-   **Consistent Patterns:** Follow established patterns for similar features across the application.
+-   **Testing Ready:** Structure code to be easily testable when testing is implemented.

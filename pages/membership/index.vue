@@ -1,93 +1,78 @@
 <template>
   <VContainer>
-    <!-- 상단 타이틀 + 등록 버튼 -->
-    <VRow align="center" justify="space-between" class="mb-6">
-      <VCol cols="auto" class="text-h5 font-weight-bold">멤버십 관리</VCol>
-      <VCol cols="auto">
-        <VBtn color="primary" @click="openRegisterModal">{{ modalTitle }} 등록</VBtn>
+    <VRow>
+      <VCol cols="12">
+        <!-- 페이지 헤더 -->
+        <div class="d-flex align-center mb-6">
+          <VIcon icon="ri-user-settings-line" size="32" class="mr-3" />
+          <h1 class="text-h4 font-weight-bold">멤버십 관리</h1>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <VTabs v-model="activeTab" class="mb-6">
+          <VTab value="unique-codes">
+            <VIcon icon="ri-code-box-line" class="mr-2" />
+            고유번호 관리
+          </VTab>
+          <VTab value="tickets">
+            <VIcon icon="ri-ticket-line" class="mr-2" />
+            티켓 관리
+          </VTab>
+          <VTab value="schedules">
+            <VIcon icon="ri-calendar-event-line" class="mr-2" />
+            일정 관리
+          </VTab>
+          <VTab value="connections">
+            <VIcon icon="ri-links-line" class="mr-2" />
+            연결 관리
+          </VTab>
+        </VTabs>
+
+        <!-- 탭 컨텐츠 -->
+        <VWindow v-model="activeTab" class="mt-4">
+          <!-- 고유번호 관리 탭 -->
+          <VWindowItem value="unique-codes">
+            <UniqueCodeTab />
+          </VWindowItem>
+
+          <!-- 티켓 관리 탭 -->
+          <VWindowItem value="tickets">
+            <TicketTab />
+          </VWindowItem>
+
+          <!-- 일정 관리 탭 -->
+          <VWindowItem value="schedules">
+            <ScheduleTab />
+          </VWindowItem>
+
+          <!-- 연결 관리 탭 -->
+          <VWindowItem value="connections">
+            <ConnectionTab />
+          </VWindowItem>
+        </VWindow>
       </VCol>
     </VRow>
-
-    <!-- 탭바 -->
-    <VTabs v-model="currentTab" align-tabs="start" slider-color="primary">
-      <VTab value="membership">수강권</VTab>
-      <VTab value="instructor">강사</VTab>
-      <VTab value="branch">지점</VTab>
-    </VTabs>
-
-    <VWindow v-model="currentTab" class="mt-4">
-      <!-- 수강권 탭 -->
-      <VWindowItem value="membership">
-        <MembershipList />
-      </VWindowItem>
-
-      <!-- 강사 탭 -->
-      <VWindowItem value="instructor">
-        <InstructorList />
-      </VWindowItem>
-
-      <!-- 지점 탭 -->
-      <VWindowItem value="branch">
-        <BranchList />
-      </VWindowItem>
-    </VWindow>
-
-    <!-- 등록 모달 (수강권/강사/지점 공용) -->
-    <VDialog v-model="showRegisterModal" width="600">
-      <VCard>
-        <VCardTitle class="text-h6 font-weight-bold">{{ modalTitle }} 등록</VCardTitle>
-        <VCardText>
-          <component :is="currentRegisterComponent" @close="closeRegisterModal" v-if="currentRegisterComponent" />
-          <div v-else>등록 폼이 준비되지 않았습니다.</div>
-        </VCardText>
-      </VCard>
-    </VDialog>
   </VContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+// 페이지 메타 설정
+definePageMeta({
+  title: '멤버십 관리',
+  layout: 'default'
+})
 
-// 임시: 등록 폼 컴포넌트 (추후 실제 컴포넌트로 교체 필요)
-const MembershipRegisterForm = null;
-const InstructorRegisterForm = null;
-const BranchRegisterForm = null;
-
-const currentTab = ref('membership');
-const showRegisterModal = ref(false);
-
-const openRegisterModal = () => {
-  showRegisterModal.value = true;
-};
-const closeRegisterModal = () => {
-  showRegisterModal.value = false;
-};
-
-const modalTitle = computed(() => {
-  switch (currentTab.value) {
-    case 'membership':
-      return '수강권';
-    case 'instructor':
-      return '강사';
-    case 'branch':
-      return '지점';
-    default:
-      return '';
-  }
-});
-
-const currentRegisterComponent = computed(() => {
-  switch (currentTab.value) {
-    case 'membership':
-      return MembershipRegisterForm;
-    case 'instructor':
-      return InstructorRegisterForm;
-    case 'branch':
-      return BranchRegisterForm;
-    default:
-      return MembershipRegisterForm;
-  }
-});
+// 탭 상태 관리
+const activeTab = ref('unique-codes')
 </script>
 
-<style scoped></style>
+<style scoped>
+.v-tab {
+  text-transform: none !important;
+  font-weight: 500;
+}
+
+.v-tab--selected {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+</style> 
