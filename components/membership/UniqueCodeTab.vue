@@ -15,6 +15,7 @@
       <VCol cols="12" md="6" class="d-flex justify-end align-center">
         <VBtn
           color="primary"
+          variant="text"
           @click="handleCreate"
           prepend-icon="ri-add-line"
         >
@@ -94,6 +95,7 @@
         <VBtn
           v-if="!search"
           color="primary"
+          variant="text"
           @click="handleCreate"
           class="mt-4"
         >

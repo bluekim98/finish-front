@@ -47,7 +47,7 @@ alwaysApply: false
 
 ## Next Development Phase (다음 작업)
 
-### Phase 4: Ticket Management (우선순위 1)
+### Phase 4: Ticket Management ✅
 
 #### 4.1 Composable Logic Implementation
 **File**: `composables/useMembership.ts`
@@ -55,7 +55,7 @@ alwaysApply: false
 ```typescript
 // TODO: 티켓 CRUD 함수들 구현
 const createTicket = async (data: TicketCreateRequest): Promise<void>
-const updateTicket = async (id: number, data: TicketUpdateRequest): Promise<void>  
+const updateTicket = async (id: number, data: TicketUpdateRequest): Promise<void>
 const deleteTicket = async (id: number): Promise<void>
 const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[]
 ```
@@ -86,13 +86,43 @@ const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[]
 - 예약 가능 시간대 설정
 - 고유번호 연결 (다중 선택)
 
-### Phase 5: Schedule Management (우선순위 2)
-- ScheduleTab.vue 구현
-- ScheduleModal.vue 구현
-- 강사 관리 기능
-- 수용 인원 및 정책 설정
+### Phase 5: Schedule Management (우선순위 1)
 
-### Phase 6: Connection Management (우선순위 3)
+#### 5.1 Composable Logic Implementation
+**File**: `composables/useMembership.ts`
+
+```typescript
+// TODO: 스케줄 CRUD 함수들 구현
+const createSchedule = async (data: ScheduleCreateRequest): Promise<void>
+const updateSchedule = async (id: number, data: ScheduleUpdateRequest): Promise<void>
+const deleteSchedule = async (id: number): Promise<void>
+const getSchedulesByTicketId = (ticketId: number): Schedule[] // 티켓에 연결된 스케줄 조회
+```
+
+**Mock Data 확장**:
+- 강사, 예약 가능 인원, 시간대 설정 등 다양한 스케줄 타입 샘플 추가
+
+#### 5.2 ScheduleTab.vue Component
+**기능 요구사항**:
+- 스케줄 목록 테이블 (VTable)
+- 강사별/날짜별 필터링
+- 예약 가능 인원 및 현황 표시
+- 연결된 티켓 표시
+- 검색 기능 (제목, 설명)
+- 페이지네이션
+
+**Table Columns**:
+- ID, 제목, 강사, 날짜, 시간, 예약 현황, 연결된 티켓, 액션
+
+#### 5.3 ScheduleModal.vue Component  
+**기능 요구사항**:
+- 생성/수정 모달
+- 강사 선택, 날짜/시간 설정
+- 수용 인원 및 예약 정책 설정
+- 티켓 연결 (다중 선택)
+- 폼 유효성 검사
+
+### Phase 6: Connection Management (우선순위 2)
 - 엔티티 간 관계 시각화
 - 연결 관리 인터페이스
 - 관계 검증 및 제약사항 처리
@@ -100,6 +130,10 @@ const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[]
 ---
 
 ## Development Guidelines
+
+### 코드 재사용 및 통일성 유지
+- **기존 구조 활용**: `UniqueCodeTab.vue`, `UniqueCodeModal.vue`, `TicketTab.vue`, `TicketModal.vue` 등 이전에 개발된 컴포넌트와 `composables/useMembership.ts`의 구조를 참고하여 중복 개발을 피하고 이미 구조화된 코드를 적극적으로 재사용합니다.
+- **UI/UX 통일성**: `VTable` + `VPagination` 조합, 모달 레이아웃 (padding, 제목 겹침 해결), 아이콘 (`ri-` prefix), 버튼 색상 (`primary`, `secondary`, `error`), 빈 상태 메시지 등 이전에 확립된 UI/UX 패턴을 스케줄 관리 기능에도 일관되게 적용합니다.
 
 ### 기술적 접근법
 - **Mock Data First**: API 연동 전 완전한 기능 구현
@@ -116,10 +150,10 @@ const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[]
 ### Component Structure
 ```
 components/membership/
-├── TicketTab.vue          # 다음 구현 대상
-├── TicketModal.vue        # 다음 구현 대상
-├── ScheduleTab.vue        # Phase 5
-├── ScheduleModal.vue      # Phase 5
+├── TicketTab.vue          # ✅ 완료
+├── TicketModal.vue        # ✅ 완료
+├── ScheduleTab.vue        # 다음 구현 대상
+├── ScheduleModal.vue      # 다음 구현 대상
 ├── ConnectionTab.vue      # Phase 6
 ├── UniqueCodeTab.vue      # ✅ 완료
 └── UniqueCodeModal.vue    # ✅ 완료
@@ -165,9 +199,9 @@ DELETE /api/schedules/:id
 
 ## Next Session Action Items
 
-1. **Immediate**: `TicketTab.vue` 구현 시작
-2. **Second**: `TicketModal.vue` 복잡한 폼 구현
-3. **Third**: 티켓 CRUD composable 로직 완성
-4. **Validation**: 기존 UniqueCode 패턴과의 일관성 검증
+1.  **Immediate**: `ScheduleTab.vue` 구현 시작
+2.  **Second**: `ScheduleModal.vue` 복잡한 폼 구현
+3.  **Third**: 스케줄 CRUD composable 로직 완성
+4.  **Validation**: 기존 패턴과의 일관성 검증
 
-**Key Focus**: 티켓의 복잡한 비즈니스 로직 (타입별 다른 필드, 가격 정책, 시간대 설정)을 사용자 친화적인 UI로 구현
+**Key Focus**: 스케줄의 복잡한 비즈니스 로직 (강사, 시간대, 인원 설정 등)을 사용자 친화적인 UI로 구현
