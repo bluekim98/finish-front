@@ -29,14 +29,6 @@ export default defineNuxtConfig({
     '@layouts/styles/index.scss',
   ],
 
-  nitro: {
-    routeRules: {
-      '/dashboard': {
-        redirect: '/membership',
-      },
-    },
-  },
-
   components: {
     dirs: [
       {
