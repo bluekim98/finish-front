@@ -149,6 +149,7 @@
 
 <script setup lang="ts">
 import type { UniqueCode } from '~/types/membership'
+import dayjs from 'dayjs'
 
 // Composables
 const { 
@@ -213,11 +214,7 @@ const getScheduleCount = (uniqueCodeId: number): number => {
 }
 
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
+  return dayjs(dateString).format('YYYY.MM.DD.')
 }
 
 const handleCreate = () => {

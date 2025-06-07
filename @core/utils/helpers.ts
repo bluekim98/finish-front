@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 // 👉 IsEmpty
 export const isEmpty = (value: unknown): boolean => {
   if (value === null || value === undefined || value === '') return true;
@@ -21,11 +23,5 @@ export const isObject = (obj: unknown): obj is Record<string, unknown> =>
 
 // 👉 IsToday
 export const isToday = (date: Date) => {
-  const today = new Date();
-
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  );
+  return dayjs(date).isSame(dayjs(), 'day')
 };

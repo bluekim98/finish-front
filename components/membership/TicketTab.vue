@@ -197,6 +197,7 @@
 <script setup lang="ts">
 import type { Ticket } from '~/types/membership'
 import TicketModal from './TicketModal.vue'
+import dayjs from 'dayjs'
 
 // Composables
 const { 
@@ -341,11 +342,7 @@ const getUniqueCodeTitle = (uniqueCodeId: number) => {
 }
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
+  return dayjs(dateString).format('YYYY.MM.DD.')
 }
 
 // 검색 필터 변경 시 페이지 리셋
