@@ -1,8 +1,8 @@
 <template>
   <div class="ticket-tab">
-    <!-- 검색 영역 -->
-    <VCard class="mb-6 mt-2">
-      <VCardText class="pb-2">
+    <!-- 액션 바 (고유번호 관리 탭 방식) -->
+    <VRow class="mb-4 mt-1">
+      <VCol cols="12" md="9"> <!-- 필터 영역 -->
         <VRow align="center">
           <VCol cols="12" md="4">
             <VTextField
@@ -11,12 +11,12 @@
               placeholder="티켓명, 타입으로 검색"
               variant="outlined"
               density="compact"
-              append-inner-icon="ri-search-line"
+              prepend-inner-icon="ri-search-line"
               clearable
               @keyup.enter="handleSearch"
             />
           </VCol>
-          <VCol cols="12" md="3">
+          <VCol cols="12" md="4">
             <VSelect
               v-model="selectedType"
               label="타입"
@@ -26,7 +26,7 @@
               clearable
             />
           </VCol>
-          <VCol cols="12" md="3">
+          <VCol cols="12" md="4">
             <VSelect
               v-model="selectedUniqueCode"
               label="고유번호"
@@ -36,19 +36,19 @@
               clearable
             />
           </VCol>
-          <VCol cols="12" md="2" class="text-right">
-            <VBtn
-              color="primary"
-              @click="openCreateModal"
-              class="mb-2"
-            >
-              <VIcon icon="ri-add-line" class="mr-1" />
-              티켓 추가
-            </VBtn>
-          </VCol>
         </VRow>
-      </VCardText>
-    </VCard>
+      </VCol>
+      <VCol cols="12" md="3" class="d-flex justify-end align-center"> <!-- 버튼 영역 -->
+        <VBtn
+          color="primary"
+          variant="text"
+          @click="openCreateModal"
+          prepend-icon="ri-add-line"
+        >
+          티켓 추가
+        </VBtn>
+      </VCol>
+    </VRow>
 
     <!-- 테이블 영역 -->
     <VCard>
@@ -136,8 +136,13 @@
           <p class="text-body-2 text-grey mb-4">
             새로운 티켓을 추가해보세요.
           </p>
-          <VBtn color="primary" @click="openCreateModal">
-            <VIcon icon="ri-add-line" class="mr-1" />
+          <VBtn
+            v-if="!search"
+            color="primary"
+            variant="text"
+            @click="openCreateModal"
+            class="mt-4"
+          >
             첫 번째 티켓 추가
           </VBtn>
         </div>
