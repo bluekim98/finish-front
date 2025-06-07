@@ -224,25 +224,65 @@ export const useMembership = () => {
   }
 
   // ===========================================
-  // 티켓 CRUD (기본 구조만)
+  // 티켓 CRUD
   // ===========================================
 
   const createTicket = async (data: CreateTicketRequest): Promise<Ticket> => {
-    // TODO: API integration
-    console.log('Creating ticket:', data)
-    throw new Error('아직 구현되지 않았습니다.')
+    const newId = Math.max(...tickets.value.map(item => item.id), 0) + 1
+    const now = new Date().toISOString()
+    
+    const newTicket: Ticket = {
+      id: newId,
+      type: data.type,
+      title: data.title,
+      usageCount: data.usageCount,
+      validityPeriod: data.validityPeriod,
+      maxParticipants: data.maxParticipants,
+      price: data.price,
+      usageLimit: data.usageLimit,
+      reservationTime: data.reservationTime,
+      uniqueCodeId: data.uniqueCodeId,
+      createdAt: now,
+      updatedAt: now
+    }
+    
+    tickets.value.unshift(newTicket)
+    return newTicket
   }
 
   const updateTicket = async (data: UpdateTicketRequest): Promise<Ticket> => {
-    // TODO: API integration
-    console.log('Updating ticket:', data)
-    throw new Error('아직 구현되지 않았습니다.')
+    const index = tickets.value.findIndex(item => item.id === data.id)
+    if (index === -1) {
+      throw new Error('티켓을 찾을 수 없습니다.')
+    }
+
+    const existingItem = tickets.value[index]!
+    const updatedTicket: Ticket = {
+      id: existingItem.id,
+      type: data.type,
+      title: data.title,
+      usageCount: data.usageCount,
+      validityPeriod: data.validityPeriod,
+      maxParticipants: data.maxParticipants,
+      price: data.price,
+      usageLimit: data.usageLimit,
+      reservationTime: data.reservationTime,
+      uniqueCodeId: data.uniqueCodeId,
+      createdAt: existingItem.createdAt,
+      updatedAt: new Date().toISOString()
+    }
+
+    tickets.value[index] = updatedTicket
+    return updatedTicket
   }
 
   const deleteTicket = async (id: number): Promise<void> => {
-    // TODO: API integration
-    console.log('Deleting ticket:', id)
-    throw new Error('아직 구현되지 않았습니다.')
+    const index = tickets.value.findIndex(item => item.id === id)
+    if (index === -1) {
+      throw new Error('티켓을 찾을 수 없습니다.')
+    }
+
+    tickets.value.splice(index, 1)
   }
 
   // ===========================================
@@ -303,6 +343,22 @@ export const useMembership = () => {
     }
   }
 
+  const openTicketModal = (mode: 'create' | 'edit' | 'view', item?: Ticket) => {
+    ticketModal.value = {
+      show: true,
+      mode,
+      item: item || null
+    }
+  }
+
+  const closeTicketModal = () => {
+    ticketModal.value = {
+      show: false,
+      mode: 'create',
+      item: null
+    }
+  }
+
   return {
     // 상태
     uniqueCodes: readonly(uniqueCodes),
@@ -319,7 +375,7 @@ export const useMembership = () => {
     updateUniqueCode,
     deleteUniqueCode,
 
-    // 티켓 CRUD (미구현)
+    // 티켓 CRUD
     createTicket,
     updateTicket,
     deleteTicket,
@@ -336,6 +392,8 @@ export const useMembership = () => {
 
     // 모달 관리
     openUniqueCodeModal,
-    closeUniqueCodeModal
+    closeUniqueCodeModal,
+    openTicketModal,
+    closeTicketModal
   }
 } 

@@ -21,6 +21,7 @@ This project is a backoffice application for managing data related to a screen g
 -   **Framework:** Nuxt 3
 -   **UI Library:** Vuetify
 -   **Language:** TypeScript
+-   **Package Manager:** pnpm
 
 ## Development Status
 
@@ -29,13 +30,22 @@ This project is a backoffice application for managing data related to a screen g
 
 ## Development Guidelines
 
-### 1. Codebase Reference
+### 1. Package Management
+-   **Exclusive Use of pnpm:** This project uses **pnpm as the sole package manager**.
+    -   **All commands must use pnpm:** `pnpm install`, `pnpm run dev`, `pnpm run build`, etc.
+    -   **Never use npm or yarn:** Avoid `npm install`, `npm run`, `yarn install`, `yarn run`, etc.
+    -   **Dependencies:** Add packages using `pnpm add <package>` or `pnpm add -D <package>` for dev dependencies.
+    -   **Scripts:** Execute package scripts using `pnpm run <script-name>`.
+-   **Lock File:** Always commit `pnpm-lock.yaml` and never commit `package-lock.json` or `yarn.lock`.
+-   **Version Consistency:** Ensure all team members use pnpm to maintain consistent dependency resolution.
+
+### 2. Codebase Reference
 -   **Always refer to the existing codebase structure and patterns**, especially within:
     -   `pages/admin/` and its related components.
     -   `pages/membership/` and its related components/pages.
 -   Follow established patterns for page routing (see `layouts/`, `components/` and `pages/` structure).
 
-### 2. UI Components & Data Display
+### 3. UI Components & Data Display
 -   **Tables:** For displaying tabular data, use Vuetify's **`VTable` component**.
 -   **Pagination:** Combine `VTable` with the **`VPagination` component** for navigating through data sets.
     -   *Reference Implementation:* `components/membership/MembershipList.vue`
@@ -43,7 +53,7 @@ This project is a backoffice application for managing data related to a screen g
 -   Follow Vuetify's official documentation for component usage.
 -   Customize Vuetify themes and styles through Nuxt configuration.
 
-### 3. State Management
+### 4. State Management
 -   **Primary Approach:** Utilize **Nuxt 3's built-in state management capabilities** (e.g., `useState`, `ref`, `computed`, composables).
 -   **Initial Prototyping:** For UI design and prototyping, prioritize using **component-local state (`ref`, `computed`)** and static/inline dummy data.
 -   **Global State:** If global state or complex cross-component logic becomes necessary:
@@ -51,14 +61,14 @@ This project is a backoffice application for managing data related to a screen g
     -   Alternatively, discuss and decide on using `composables/` (e.g. `useCustomState()`) for such logic, following Nuxt 3 best practices.
 -   **Third-party Libraries:** **Avoid introducing external state management libraries (like Pinia, Vuex, etc.)** without explicit prior discussion and approval.
 
-### 4. TypeScript & Typing
+### 5. TypeScript & Typing
 -   **Minimal Types for UI Design:** During the UI design phase (before API integration), use TypeScript types minimally.
     -   Inline types, `any`, or simple component-local `interface` definitions are acceptable.
 -   **API-Driven Types:** The primary source for data types will be code generated from the API server specifications.
     -   Therefore, **avoid creating extensive, separate global type definition files** (e.g., in a `/types` directory) at this stage.
 -   **Linting:** Linter checks and error reporting should **focus primarily on TypeScript (`.ts`) files**. For `.vue` files, TypeScript errors within `<script lang="ts">` blocks will be addressed, but template or style linting is out of scope for AI assistance unless specifically requested.
 
-### 5. Component Design & Naming
+### 6. Component Design & Naming
 -   **File Naming:** Vue component files: **PascalCase** (e.g., `UserProfileCard.vue`).
 -   **Props Naming:** Prop names: **camelCase** (e.g., `userName`).
 -   **Events Naming:** Custom event names: **kebab-case** (e.g., `item-selected`).
@@ -69,7 +79,7 @@ This project is a backoffice application for managing data related to a screen g
     -   `components/[feature]/`: Feature-specific components (e.g., `components/membership/MembershipTable.vue`).
     -   *Refer to existing `components/` structure for guidance.*
 
-### 6. Styling
+### 7. Styling
 -   Use Vuetify's utility classes for common styling needs.
 -   For custom styles, prefer scoped CSS (`<style scoped>`).
 -   Define consistent color palettes and typography via Vuetify's theming.
@@ -84,13 +94,13 @@ This project is a backoffice application for managing data related to a screen g
 
 ## Data & API Integration Rules
 
-### 7. Data Management Strategy
+### 8. Data Management Strategy
 -   **Prototyping Phase:** Use **hardcoded/mock data** for rapid UI development and testing.
     -   Example: `const mockData = [{ id: 1, title: 'Sample' }]`
 -   **Mock Data Location:** Keep mock data close to components or in dedicated mock files within feature directories.
 -   **Data Structure:** Ensure mock data structure matches expected API response format for easier transition.
 
-### 8. Business Logic Separation
+### 9. Business Logic Separation
 -   **Separation of Concerns:** Strictly separate business logic from UI rendering logic.
     -   **UI Logic:** Component state, form handling, user interactions → Vue components
     -   **Business Logic:** Data processing, API calls, validation → Composables
@@ -107,7 +117,7 @@ This project is a backoffice application for managing data related to a screen g
     }
     ```
 
-### 9. Type Management for API Integration
+### 10. Type Management for API Integration
 -   **Dedicated Type Files:** Create separate type definition files in `types/` directory for API data structures.
 -   **API-Ready Types:** Design types to be compatible with future API server integration.
     ```typescript
@@ -130,7 +140,7 @@ This project is a backoffice application for managing data related to a screen g
     import type { FeatureItem } from '~/types/feature'
     ```
 
-### 10. Development Architecture
+### 11. Development Architecture
 -   **Layered Structure:** Follow consistent file organization for features:
     ```
     types/[feature].ts           → Type definitions
@@ -147,7 +157,7 @@ This project is a backoffice application for managing data related to a screen g
     }
     ```
 
-### 11. Form Validation & Complex Logic
+### 12. Form Validation & Complex Logic
 -   **Conditional Validation:** Handle complex validation rules within composables.
 -   **Form State Management:** Use Nuxt's reactive state for form handling.
 -   **Error Handling:** Prepare error handling structure for future API integration.
@@ -155,7 +165,7 @@ This project is a backoffice application for managing data related to a screen g
     const { data, error, pending } = await $fetch('/api/endpoint')
     ```
 
-### 12. Development Best Practices
+### 13. Development Best Practices
 -   **Progressive Enhancement:** Build features incrementally (mock → logic → API).
 -   **Code Comments:** Mark sections that need API integration with `// TODO: API integration`.
 -   **Consistent Patterns:** Follow established patterns for similar features across the application.

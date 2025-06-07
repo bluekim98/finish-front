@@ -1,13 +1,13 @@
 <template>
   <VDialog
     :model-value="modal.show"
-    max-width="600"
+    max-width="95vw"
     persistent
     @update:model-value="handleClose"
   >
-    <VCard>
+    <VCard class="d-flex flex-column" style="max-height: 95vh;">
       <!-- 모달 헤더 -->
-      <VCardTitle class="d-flex align-center pa-6 pb-4">
+      <VCardTitle class="d-flex align-center pa-6 pb-4 bg-grey-50">
         <VIcon
           :icon="isEditMode ? 'ri-edit-line' : 'ri-add-line'"
           class="mr-3"
@@ -16,7 +16,7 @@
       </VCardTitle>
 
       <!-- 모달 내용 -->
-      <VCardText class="pa-6 pt-0">
+      <VCardText class="pa-6 pt-4 flex-grow-1 overflow-y-auto">
         <VForm ref="formRef" @submit.prevent="handleSubmit">
           <VRow>
             <!-- 타이틀 (필수) -->
@@ -47,12 +47,14 @@
       </VCardText>
 
       <!-- 모달 액션 -->
-      <VCardActions class="pa-6 pt-0">
+      <VCardActions class="pa-6 pt-4 border-t bg-grey-50">
         <VSpacer />
         <VBtn
           @click="handleClose"
           :disabled="loading"
-          variant="outlined"
+          color="secondary"
+          variant="text"
+          class="bg-secondary-50"
         >
           취소
         </VBtn>
@@ -60,6 +62,8 @@
           color="primary"
           :loading="loading"
           @click="handleSubmit"
+          variant="text"
+          class="bg-primary-25"
         >
           {{ isEditMode ? '수정' : '생성' }}
         </VBtn>
@@ -206,7 +210,6 @@ watch(
 </script>
 
 <style scoped>
-/* 모달 전체 스타일 정리 */
 .v-card {
   overflow: hidden;
 }
@@ -215,8 +218,31 @@ watch(
   width: 100%;
 }
 
-/* 취소 버튼 스타일 개선 */
-.v-btn--outlined {
-  border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+/* 버튼 스타일 개선 */
+.v-btn {
+  font-weight: 500;
+}
+
+.v-btn--text {
+  border: none !important;
+}
+
+/* 스크롤 스타일 */
+.v-card-text {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--v-border-color), var(--v-border-opacity)) transparent;
+}
+
+.v-card-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.v-card-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.v-card-text::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 3px;
 }
 </style> 
