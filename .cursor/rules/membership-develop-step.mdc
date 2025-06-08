@@ -154,43 +154,8 @@ components/membership/
 - 재사용 가능한 패턴 유지
 - TODO 주석으로 API 연동 지점 표시
 
----
-
-## API Integration Preparation
-
-### Future API Endpoints (예상)
-```
-GET    /api/tickets
-POST   /api/tickets
-PUT    /api/tickets/:id
-DELETE /api/tickets/:id
-GET    /api/tickets/by-unique-code/:id
-
-GET    /api/schedules  
-POST   /api/schedules
-PUT    /api/schedules/:id
-DELETE /api/schedules/:id
-```
-
 ### Type Safety
 - API response 타입과 mock 데이터 타입 일치 유지
 - 런타임 데이터 검증 준비
 
----
 
-## Testing Strategy (추후)
-- Component 단위 테스트
-- CRUD 기능 통합 테스트  
-- 관계 검증 로직 테스트
-- UI 상호작용 테스트
-
----
-
-## Next Session Action Items
-
-1.  **Immediate**: `ScheduleTab.vue` 구현 시작
-2.  **Second**: `ScheduleModal.vue` 복잡한 폼 구현
-3.  **Third**: 스케줄 CRUD composable 로직 완성
-4.  **Validation**: 기존 패턴과의 일관성 검증
-
-**Key Focus**: 스케줄의 복잡한 비즈니스 로직 (강사, 시간대, 인원 설정 등)을 사용자 친화적인 UI로 구현
