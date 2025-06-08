@@ -91,7 +91,10 @@
               </td>
               <td>
                 <VChip size="small" variant="outlined">
-                  {{ getUniqueCodeTitle(schedule.uniqueCodeId) }}
+                  {{ getUniqueCodeTitle(schedule.uniqueCodeIds[0]) }}
+                  <span v-if="schedule.uniqueCodeIds.length > 1" class="ml-1">
+                    외 {{ schedule.uniqueCodeIds.length - 1 }}개
+                  </span>
                 </VChip>
               </td>
               <td class="text-center">
@@ -263,7 +266,7 @@ const filteredSchedules = computed(() => {
   // 고유번호 필터링
   if (selectedUniqueCode.value) {
     result = result.filter(schedule => 
-      schedule.uniqueCodeId === selectedUniqueCode.value
+      schedule.uniqueCodeIds.includes(selectedUniqueCode.value)
     )
   }
 

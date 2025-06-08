@@ -63,7 +63,7 @@ const mockTickets: Ticket[] = [
       startTime: '09:00',
       endTime: '21:00'
     },
-    uniqueCodeId: 1,
+    uniqueCodeIds: [1],
     createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2024-01-15T09:00:00Z'
   },
@@ -84,7 +84,7 @@ const mockTickets: Ticket[] = [
     reservationTime: {
       type: '하루종일'
     },
-    uniqueCodeId: 1,
+    uniqueCodeIds: [1, 2],
     createdAt: '2024-01-16T10:30:00Z',
     updatedAt: '2024-01-16T10:30:00Z'
   }
@@ -113,7 +113,7 @@ const mockSchedules: Schedule[] = [
         hours: 24
       }
     },
-    uniqueCodeId: 1,
+    uniqueCodeIds: [1],
     createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2024-01-15T09:00:00Z'
   },
@@ -132,7 +132,7 @@ const mockSchedules: Schedule[] = [
       startTime: '09:00',
       endTime: '18:00'
     },
-    uniqueCodeId: 3,
+    uniqueCodeIds: [3],
     createdAt: '2024-01-17T14:00:00Z',
     updatedAt: '2024-01-17T14:00:00Z'
   }
@@ -208,8 +208,8 @@ export const useMembership = () => {
 
   const deleteUniqueCode = async (id: number): Promise<void> => {
     // 연결된 티켓이나 일정이 있는지 확인
-    const hasTickets = tickets.value.some(ticket => ticket.uniqueCodeId === id)
-    const hasSchedules = schedules.value.some(schedule => schedule.uniqueCodeId === id)
+    const hasTickets = tickets.value.some(ticket => ticket.uniqueCodeIds.includes(id))
+    const hasSchedules = schedules.value.some(schedule => schedule.uniqueCodeIds.includes(id))
     
     if (hasTickets || hasSchedules) {
       throw new Error('연결된 티켓 또는 일정이 있어 삭제할 수 없습니다.')
@@ -241,7 +241,7 @@ export const useMembership = () => {
       price: data.price,
       usageLimit: data.usageLimit,
       reservationTime: data.reservationTime,
-      uniqueCodeId: data.uniqueCodeId,
+      uniqueCodeIds: data.uniqueCodeIds,
       createdAt: now,
       updatedAt: now
     }
@@ -267,7 +267,7 @@ export const useMembership = () => {
       price: data.price,
       usageLimit: data.usageLimit,
       reservationTime: data.reservationTime,
-      uniqueCodeId: data.uniqueCodeId,
+      uniqueCodeIds: data.uniqueCodeIds,
       createdAt: existingItem.createdAt,
       updatedAt: new Date().toISOString()
     }
@@ -316,11 +316,11 @@ export const useMembership = () => {
   }
 
   const getTicketsByUniqueCodeId = (uniqueCodeId: number): Ticket[] => {
-    return tickets.value.filter(ticket => ticket.uniqueCodeId === uniqueCodeId)
+    return tickets.value.filter(ticket => ticket.uniqueCodeIds.includes(uniqueCodeId))
   }
 
   const getSchedulesByUniqueCodeId = (uniqueCodeId: number): Schedule[] => {
-    return schedules.value.filter(schedule => schedule.uniqueCodeId === uniqueCodeId)
+    return schedules.value.filter(schedule => schedule.uniqueCodeIds.includes(uniqueCodeId))
   }
 
   // ===========================================

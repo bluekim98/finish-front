@@ -105,13 +105,56 @@
                 v-model="form.dateRange"
                 range
                 :format="dateFormat"
-                :locale="dateLocale"
+                locale="ko"
                 :enable-time-picker="false"
                 auto-apply
                 :text-input="true"
                 :placeholder="'시작일 ~ 종료일'"
                 :rules="[v => !!v || '기간은 필수입니다']"
-              />
+                :week-start="0"
+                :month-change-on-scroll="false"
+                :calendar-cell-class-name="'dp__calendar-cell'"
+                :preview-format="(date) => dayjs(date).format('YYYY.MM.DD')"
+                :menu-class-name="'dp__menu'"
+                :calendar-class-name="'dp__calendar'"
+                :action-row-class-name="'dp__action-row'"
+                :input-class-name="'dp__input'"
+                :inline-input-class-name="'dp__inline-input'"
+                :calendar-header-class-name="'dp__calendar-header'"
+                :calendar-row-class-name="'dp__calendar-row'"
+                :calendar-header-separator-class-name="'dp__calendar-header-separator'"
+                :calendar-weekday-class-name="'dp__calendar-weekday'"
+                :calendar-month-class-name="'dp__calendar-month'"
+                :calendar-year-class-name="'dp__calendar-year'"
+                :calendar-decade-class-name="'dp__calendar-decade'"
+                :action-preview-class-name="'dp__action-preview'"
+                :action-buttons-class-name="'dp__action-buttons'"
+                :action-button-class-name="'dp__action-button'"
+                :action-select-class-name="'dp__action-select'"
+                :action-cancel-class-name="'dp__action-cancel'"
+                :month-year-select-class-name="'dp__month-year-select'"
+                :month-year-header-class-name="'dp__month-year-header'"
+                :time-picker-class-name="'dp__time-picker'"
+                :time-picker-header-class-name="'dp__time-picker-header'"
+                :time-picker-input-class-name="'dp__time-picker-input'"
+                :time-picker-column-class-name="'dp__time-picker-column'"
+                :time-picker-cell-class-name="'dp__time-picker-cell'"
+              >
+                <template #trigger>
+                  <VTextField
+                    :model-value="form.dateRange ? formatDateRange(form.dateRange) : ''"
+                    label="기간*"
+                    placeholder="시작일 ~ 종료일"
+                    variant="outlined"
+                    readonly
+                    :rules="[v => !!v || '기간은 필수입니다']"
+                  >
+                    <template #append-inner>
+                      <VIcon icon="ri-calendar-line" />
+                    </template>
+                  </VTextField>
+                </template>
+              </vue-date-picker>
             </VCol>
 
             <VCol cols="12">
@@ -319,12 +362,9 @@ const dateFormat = (date: Date) => {
   return dayjs(date).format('YYYY.MM.DD')
 }
 
-const dateLocale = {
-  weekdays: ['일', '월', '화', '수', '목', '금', '토'],
-  months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-  input: ['시작일', '종료일'],
-  select: ['날짜 선택'],
-  placeholder: '날짜 선택'
+const formatDateRange = (dateRange: [Date, Date]) => {
+  if (!dateRange || !Array.isArray(dateRange) || dateRange.length !== 2) return ''
+  return `${dayjs(dateRange[0]).format('YYYY.MM.DD')} ~ ${dayjs(dateRange[1]).format('YYYY.MM.DD')}`
 }
 
 // Methods

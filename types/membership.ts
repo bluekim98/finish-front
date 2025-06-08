@@ -62,7 +62,7 @@ export interface Ticket {
   price: number // 필수: 판매 가격 (원화)
   usageLimit: UsageLimit // 필수: 이용 횟수 제한
   reservationTime: ReservationTime // 필수: 예약 가능한 시간
-  uniqueCodeId: number // 필수: 연결된 고유번호 ID
+  uniqueCodeIds: number[] // 필수: 연결된 고유번호 ID 배열
   createdAt: string
   updatedAt: string
 }
@@ -79,7 +79,7 @@ export interface CreateTicketRequest {
   price: number
   usageLimit: UsageLimit
   reservationTime: ReservationTime
-  uniqueCodeId: number
+  uniqueCodeIds: number[]
 }
 
 export interface UpdateTicketRequest extends CreateTicketRequest {
@@ -118,7 +118,7 @@ export interface Schedule {
     endTime: string // 종료시간
   } // 선택: 하루 중 상세 시간
   reservationCancelPolicy?: ReservationCancelPolicy // 선택: 예약/취소 가능 시간
-  uniqueCodeId: number // 필수: 연결된 고유번호 ID
+  uniqueCodeIds: number[] // 필수: 연결된 고유번호 ID 배열
   createdAt: string
   updatedAt: string
 }
@@ -139,7 +139,7 @@ export interface CreateScheduleRequest {
     endTime: string
   }
   reservationCancelPolicy?: ReservationCancelPolicy
-  uniqueCodeId: number
+  uniqueCodeIds: number[]
 }
 
 export interface UpdateScheduleRequest extends CreateScheduleRequest {

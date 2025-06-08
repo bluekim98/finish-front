@@ -434,11 +434,11 @@ const titleRules = [
 ]
 
 const uniqueCodeRules = [
-  (v: number[]) => v.length > 0 || '고유번호는 필수입니다.'
+  (v: number[] | null) => (v && v.length > 0) || '고유번호는 필수입니다.'
 ]
 
 const usageCountRules = [
-  (v: number) => v > 0 || '이용횟수는 1 이상이어야 합니다.'
+  (v: number | null) => !v || v > 0 || '이용횟수는 1 이상이어야 합니다.'
 ]
 
 const validityPeriodRules = [
@@ -446,26 +446,25 @@ const validityPeriodRules = [
 ]
 
 const customDaysRules = [
-  (v: number) => v > 0 || '기간은 1일 이상이어야 합니다.'
+  (v: number | null) => !v || v > 0 || '기간은 1일 이상이어야 합니다.'
 ]
 
 const priceRules = [
-  (v: number) => v >= 0 || '가격은 0 이상이어야 합니다.'
+  (v: number | null) => (v !== null && v >= 0) || '가격은 0 이상이어야 합니다.'
 ]
 
 const maxParticipantsRules = [
-  (v: number) => !!v || '최대 인원은 필수입니다.',
-  (v: number) => v > 0 || '최대 인원은 1명 이상이어야 합니다.'
+  (v: number | null) => form.value.isUnlimitedParticipants || (!!v && v > 0) || '최대 인원은 1명 이상이어야 합니다.'
 ]
 
 const startTimeRules = [
-  (v: string) => !!v || '시작 시간은 필수입니다.'
+  (v: string) => form.value.reservationTime.type !== '시간대지정' || !!v || '시작 시간은 필수입니다.'
 ]
 
 const endTimeRules = [
-  (v: string) => !!v || '종료 시간은 필수입니다.',
+  (v: string) => form.value.reservationTime.type !== '시간대지정' || !!v || '종료 시간은 필수입니다.',
   (v: string) => {
-    if (form.value.reservationTime.startTime && v) {
+    if (form.value.reservationTime.type === '시간대지정' && form.value.reservationTime.startTime && v) {
       return v > form.value.reservationTime.startTime || '종료 시간은 시작 시간보다 늦어야 합니다.'
     }
     return true

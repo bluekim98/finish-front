@@ -100,7 +100,10 @@
               </td>
               <td>
                 <VChip size="small" variant="outlined">
-                  {{ getUniqueCodeTitle(ticket.uniqueCodeId) }}
+                  {{ getUniqueCodeTitle(ticket.uniqueCodeIds[0]) }}
+                  <span v-if="ticket.uniqueCodeIds.length > 1" class="ml-1">
+                    외 {{ ticket.uniqueCodeIds.length - 1 }}개
+                  </span>
                 </VChip>
               </td>
               <td>{{ formatDate(ticket.createdAt) }}</td>
@@ -258,7 +261,9 @@ const filteredTickets = computed(() => {
 
   // 고유번호 필터링
   if (selectedUniqueCode.value) {
-    filtered = filtered.filter(ticket => ticket.uniqueCodeId === selectedUniqueCode.value)
+    filtered = filtered.filter(ticket => 
+      ticket.uniqueCodeIds.includes(selectedUniqueCode.value)
+    )
   }
 
   return filtered
