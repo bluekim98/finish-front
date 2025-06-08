@@ -73,8 +73,9 @@
               <td>{{ ticket.id }}</td>
               <td>
                 <VChip
-                  :color="ticket.type === '횟수제' ? 'primary' : 'success'"
                   size="small"
+                  color="secondary"
+                  variant="tonal"
                 >
                   {{ ticket.type }}
                 </VChip>
@@ -99,20 +100,22 @@
                 {{ ticket.maxParticipants === 'unlimited' ? '무제한' : `${ticket.maxParticipants}명` }}
               </td>
               <td>
-                <VChip size="small" variant="outlined">
-                  {{ getUniqueCodeTitle(ticket.uniqueCodeIds[0]) }}
-                  <span v-if="ticket.uniqueCodeIds.length > 1" class="ml-1">
-                    외 {{ ticket.uniqueCodeIds.length - 1 }}개
-                  </span>
+                <VChip 
+                  size="small" 
+                  variant="tonal" 
+                  color="secondary"
+                >
+                  {{ ticket.uniqueCodeIds.length }}개
                 </VChip>
               </td>
               <td>{{ formatDate(ticket.createdAt) }}</td>
               <td class="text-center">
-                <div class="d-flex gap-1 justify-center">
+                <div class="d-flex justify-center gap-2">
                   <VBtn
                     icon
                     size="small"
                     variant="text"
+                    color="primary"
                     @click="openEditModal(ticket)"
                   >
                     <VIcon icon="ri-edit-line" />
@@ -122,7 +125,7 @@
                     size="small"
                     variant="text"
                     color="secondary"
-                    @click="confirmDelete(ticket)"
+                    @click="deleteTicket(ticket)"
                   >
                     <VIcon icon="ri-delete-bin-line" />
                   </VBtn>

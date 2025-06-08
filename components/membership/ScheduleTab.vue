@@ -90,11 +90,8 @@
                 <span v-else class="text-grey">-</span>
               </td>
               <td>
-                <VChip size="small" variant="outlined">
-                  {{ getUniqueCodeTitle(schedule.uniqueCodeIds[0]) }}
-                  <span v-if="schedule.uniqueCodeIds.length > 1" class="ml-1">
-                    외 {{ schedule.uniqueCodeIds.length - 1 }}개
-                  </span>
+                <VChip size="small" variant="tonal" color="secondary">
+                  {{ schedule.uniqueCodeIds.length }}개
                 </VChip>
               </td>
               <td class="text-center">

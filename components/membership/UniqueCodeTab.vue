@@ -26,92 +26,100 @@
 
     <!-- 데이터 테이블 -->
     <VCard>
-      <VTable>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>타이틀</th>
-            <th>비고</th>
-            <th>연결된 티켓</th>
-            <th>연결된 일정</th>
-            <th>생성일</th>
-            <th>액션</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in filteredItems" :key="item.id">
-            <td>{{ item.id }}</td>
-            <td class="font-weight-medium">{{ item.title }}</td>
-            <td>
-              <span v-if="item.description" class="text-body-2">
-                {{ item.description }}
-              </span>
-              <span v-else class="text-grey">-</span>
-            </td>
-            <td>
-              <VChip
-                :color="getTicketCount(item.id) > 0 ? 'success' : 'grey'"
-                size="small"
-              >
-                {{ getTicketCount(item.id) }}개
-              </VChip>
-            </td>
-            <td>
-              <VChip
-                :color="getScheduleCount(item.id) > 0 ? 'info' : 'grey'"
-                size="small"
-              >
-                {{ getScheduleCount(item.id) }}개
-              </VChip>
-            </td>
-            <td class="text-body-2">
-              {{ formatDate(item.createdAt) }}
-            </td>
-            <td>
-              <VBtn
-                icon="ri-edit-line"
-                size="small"
-                variant="text"
-                @click="handleEdit(item)"
-              />
-              <VBtn
-                icon="ri-delete-bin-line"
-                size="small"
-                variant="text"
-                color="secondary"
-                @click="handleDelete(item)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </VTable>
+      <VCardText class="pa-0">
+        <VTable class="text-no-wrap">
+          <thead>
+            <tr>
+              <th class="text-left">ID</th>
+              <th class="text-left">타이틀</th>
+              <th class="text-left">비고</th>
+              <th class="text-left">연결된 티켓</th>
+              <th class="text-left">연결된 일정</th>
+              <th class="text-left">생성일</th>
+              <th class="text-center">액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in filteredItems" :key="item.id">
+              <td>{{ item.id }}</td>
+              <td class="font-weight-medium">{{ item.title }}</td>
+              <td>
+                <span v-if="item.description" class="text-body-2">
+                  {{ item.description }}
+                </span>
+                <span v-else class="text-grey">-</span>
+              </td>
+              <td>
+                <VChip
+                  size="small"
+                  variant="tonal"
+                  color="secondary"
+                >
+                  {{ getTicketCount(item.id) }}개
+                </VChip>
+              </td>
+              <td>
+                <VChip
+                  size="small"
+                  variant="tonal"
+                  color="secondary"
+                >
+                  {{ getScheduleCount(item.id) }}개
+                </VChip>
+              </td>
+              <td class="text-body-2">
+                {{ formatDate(item.createdAt) }}
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-center gap-2">
+                  <VBtn
+                    icon="ri-edit-line"
+                    size="small"
+                    variant="text"
+                    color="primary"
+                    @click="handleEdit(item)"
+                  />
+                  <VBtn
+                    icon="ri-delete-bin-line"
+                    size="small"
+                    variant="text"
+                    color="secondary"
+                    @click="handleDelete(item)"
+                  />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </VTable>
 
-      <!-- 데이터 없음 상태 -->
-      <div v-if="filteredItems.length === 0" class="text-center py-8">
-        <VIcon icon="ri-database-line" size="64" class="text-grey mb-4" />
-        <p class="text-h6 text-grey">
-          {{ search ? '검색 결과가 없습니다.' : '등록된 고유번호가 없습니다.' }}
-        </p>
-        <VBtn
-          v-if="!search"
-          color="primary"
-          variant="text"
-          @click="handleCreate"
-          class="mt-4"
-        >
-          첫 번째 고유번호 추가
-        </VBtn>
-      </div>
+        <!-- 데이터 없음 상태 -->
+        <div v-if="filteredItems.length === 0" class="text-center py-8">
+          <VIcon icon="ri-database-line" size="64" class="text-grey mb-4" />
+          <p class="text-h6 mb-2">고유번호가 없습니다</p>
+          <p class="text-body-2 text-grey mb-4">
+            새로운 고유번호를 추가해보세요.
+          </p>
+          <VBtn
+            v-if="!search"
+            color="primary"
+            variant="text"
+            @click="handleCreate"
+            class="mt-4"
+          >
+            첫 번째 고유번호 추가
+          </VBtn>
+        </div>
+      </VCardText>
+
+      <!-- 페이지네이션 -->
+      <VCardActions v-if="totalPages > 1" class="justify-center">
+        <VPagination
+          v-model="currentPage"
+          :length="totalPages"
+          :total-visible="7"
+        />
+      </VCardActions>
     </VCard>
-
-    <!-- 페이지네이션 -->
-    <div v-if="totalPages > 1" class="d-flex justify-center mt-4">
-      <VPagination
-        v-model="currentPage"
-        :length="totalPages"
-        :total-visible="7"
-      />
-    </div>
 
     <!-- CRUD 모달 -->
     <UniqueCodeModal />
@@ -119,9 +127,14 @@
     <!-- 삭제 확인 다이얼로그 -->
     <VDialog v-model="deleteDialog.show" max-width="400">
       <VCard>
-        <VCardTitle>고유번호 삭제</VCardTitle>
+        <VCardTitle class="d-flex align-center">
+          <VIcon icon="ri-alert-line" class="mr-2" color="warning" />
+          고유번호 삭제 확인
+        </VCardTitle>
         <VCardText>
-          <p><strong>{{ deleteDialog.item?.title }}</strong>을(를) 정말 삭제하시겠습니까?</p>
+          <p class="mb-2">
+            "<strong>{{ deleteDialog.item?.title }}</strong>" 고유번호를 삭제하시겠습니까?
+          </p>
           <VAlert
             v-if="deleteDialog.hasConnections"
             type="warning"
@@ -132,9 +145,11 @@
         </VCardText>
         <VCardActions>
           <VSpacer />
-          <VBtn @click="closeDeleteDialog">취소</VBtn>
+          <VBtn @click="closeDeleteDialog" :disabled="deleteDialog.loading">
+            취소
+          </VBtn>
           <VBtn
-            color="error"
+            color="secondary"
             :disabled="deleteDialog.hasConnections"
             :loading="deleteDialog.loading"
             @click="confirmDelete"
@@ -270,6 +285,11 @@ watch(search, () => {
 </script>
 
 <style scoped>
+.text-no-wrap th,
+.text-no-wrap td {
+  white-space: nowrap;
+}
+
 .v-table th {
   font-weight: 600 !important;
   color: rgb(var(--v-theme-on-surface)) !important;
