@@ -214,11 +214,14 @@
           <VRow>
             <VCol cols="12">
               <VSelect
-                v-model="form.uniqueCodeId"
+                v-model="form.uniqueCodeIds"
                 label="고유번호*"
                 :items="uniqueCodeOptions"
                 variant="outlined"
-                :rules="[v => !!v || '고유번호는 필수입니다']"
+                multiple
+                chips
+                closable-chips
+                :rules="[v => v.length > 0 || '고유번호는 필수입니다']"
               />
             </VCol>
           </VRow>
@@ -299,7 +302,7 @@ const form = ref({
   timeType: 'allday' as 'allday' | 'custom',
   startTime: '',
   endTime: '',
-  uniqueCodeId: null as number | null,
+  uniqueCodeIds: [] as number[],
   hasReservationDeadline: false,
   reservationDeadlineHours: null as number | null,
   hasCancellationDeadline: false,
@@ -337,7 +340,7 @@ const resetForm = () => {
     timeType: 'allday',
     startTime: '',
     endTime: '',
-    uniqueCodeId: null,
+    uniqueCodeIds: [],
     hasReservationDeadline: false,
     reservationDeadlineHours: null,
     hasCancellationDeadline: false,
@@ -356,6 +359,7 @@ const initEditData = () => {
     maxParticipants,
     reservationDeadlineHours,
     cancellationDeadlineHours,
+    uniqueCodeIds,
     ...rest 
   } = props.editData
   
@@ -367,6 +371,7 @@ const initEditData = () => {
     maxParticipants: maxParticipants === 'unlimited' ? null : Number(maxParticipants),
     startTime: startTime || '',
     endTime: endTime || '',
+    uniqueCodeIds: uniqueCodeIds || [],
     hasReservationDeadline: !!reservationDeadlineHours,
     reservationDeadlineHours: reservationDeadlineHours || null,
     hasCancellationDeadline: !!cancellationDeadlineHours,

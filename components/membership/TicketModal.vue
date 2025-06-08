@@ -261,6 +261,24 @@
                 :rules="endTimeRules"
               />
             </VCol>
+
+            <!-- 연결 정보 -->
+            <VCol cols="12">
+              <h4 class="text-h6 mb-4">연결 정보</h4>
+            </VCol>
+
+            <VCol cols="12">
+              <VSelect
+                v-model="form.uniqueCodeIds"
+                label="고유번호*"
+                :items="uniqueCodeOptions"
+                variant="outlined"
+                multiple
+                chips
+                closable-chips
+                :rules="uniqueCodeRules"
+              />
+            </VCol>
           </VRow>
         </VForm>
       </VCardText>
@@ -341,7 +359,7 @@ const getDefaultForm = () => ({
     startTime: undefined as string | undefined,
     endTime: undefined as string | undefined
   },
-  uniqueCodeId: undefined as number | undefined
+  uniqueCodeIds: [] as number[]
 })
 
 const form = ref(getDefaultForm())
@@ -416,7 +434,7 @@ const titleRules = [
 ]
 
 const uniqueCodeRules = [
-  (v: number) => !!v || '고유번호는 필수입니다.'
+  (v: number[]) => v.length > 0 || '고유번호는 필수입니다.'
 ]
 
 const usageCountRules = [
@@ -485,7 +503,7 @@ const loadFormData = () => {
       price: item.price,
       usageLimit: { ...item.usageLimit },
       reservationTime: { ...item.reservationTime },
-      uniqueCodeId: item.uniqueCodeId
+      uniqueCodeIds: item.uniqueCodeIds || []
     }
   } else {
     resetForm()
@@ -530,7 +548,7 @@ const prepareFormData = () => {
       startTime: form.value.reservationTime.type === '시간대지정' ? form.value.reservationTime.startTime : undefined,
       endTime: form.value.reservationTime.type === '시간대지정' ? form.value.reservationTime.endTime : undefined
     },
-    uniqueCodeId: form.value.uniqueCodeId!
+    uniqueCodeIds: form.value.uniqueCodeIds
   }
 
   if (form.value.type === '횟수제') {
