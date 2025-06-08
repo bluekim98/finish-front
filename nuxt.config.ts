@@ -46,7 +46,7 @@ export default defineNuxtConfig({
     ],
   },
 
-  plugins: ['@/plugins/vuetify/index.ts', '@/plugins/iconify/index.ts'],
+  plugins: ['@/plugins/vuetify/index.ts', '@/plugins/iconify/index.ts', '@/plugins/v-network-graph/index.ts'],
 
   imports: {
     dirs: ['./@core/utils', './@core/composable/', './plugins/*/composables/*'],
@@ -127,7 +127,7 @@ export default defineNuxtConfig({
   },
 
   build: {
-    transpile: ['vuetify', '@vuepic/vue-datepicker'],
+    transpile: ['vuetify', '@vuepic/vue-datepicker', 'v-network-graph'],
   },
 
   modules: ['@vueuse/nuxt', '@nuxtjs/device', '@pinia/nuxt', 'nuxt-auth-utils'],
