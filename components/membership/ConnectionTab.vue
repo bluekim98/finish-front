@@ -178,6 +178,7 @@
         <VCardActions class="pa-4">
           <VSpacer />
           <VBtn
+            color="secondary"
             variant="text"
             @click="ticketDialog.show = false"
           >
@@ -224,6 +225,7 @@
         <VCardActions class="pa-4">
           <VSpacer />
           <VBtn
+            color="secondary"
             variant="text"
             @click="scheduleDialog.show = false"
           >

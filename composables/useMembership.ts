@@ -290,21 +290,61 @@ export const useMembership = () => {
   // ===========================================
 
   const createSchedule = async (data: CreateScheduleRequest): Promise<Schedule> => {
-    // TODO: API integration
-    console.log('Creating schedule:', data)
-    throw new Error('아직 구현되지 않았습니다.')
+    const newId = Math.max(...schedules.value.map(item => item.id), 0) + 1
+    const now = new Date().toISOString()
+    
+    const newSchedule: Schedule = {
+      id: newId,
+      title: data.title,
+      instructor: data.instructor,
+      description: data.description,
+      maxParticipants: data.maxParticipants,
+      location: data.location,
+      period: data.period,
+      time: data.time,
+      reservationCancelPolicy: data.reservationCancelPolicy,
+      uniqueCodeIds: data.uniqueCodeIds,
+      createdAt: now,
+      updatedAt: now
+    }
+    
+    schedules.value.unshift(newSchedule)
+    return newSchedule
   }
 
   const updateSchedule = async (data: UpdateScheduleRequest): Promise<Schedule> => {
-    // TODO: API integration
-    console.log('Updating schedule:', data)
-    throw new Error('아직 구현되지 않았습니다.')
+    const index = schedules.value.findIndex(item => item.id === data.id)
+    if (index === -1) {
+      throw new Error('일정을 찾을 수 없습니다.')
+    }
+
+    const existingItem = schedules.value[index]!
+    const updatedSchedule: Schedule = {
+      id: existingItem.id,
+      title: data.title,
+      instructor: data.instructor,
+      description: data.description,
+      maxParticipants: data.maxParticipants,
+      location: data.location,
+      period: data.period,
+      time: data.time,
+      reservationCancelPolicy: data.reservationCancelPolicy,
+      uniqueCodeIds: data.uniqueCodeIds,
+      createdAt: existingItem.createdAt,
+      updatedAt: new Date().toISOString()
+    }
+
+    schedules.value[index] = updatedSchedule
+    return updatedSchedule
   }
 
   const deleteSchedule = async (id: number): Promise<void> => {
-    // TODO: API integration
-    console.log('Deleting schedule:', id)
-    throw new Error('아직 구현되지 않았습니다.')
+    const index = schedules.value.findIndex(item => item.id === id)
+    if (index === -1) {
+      throw new Error('일정을 찾을 수 없습니다.')
+    }
+
+    schedules.value.splice(index, 1)
   }
 
   // ===========================================
