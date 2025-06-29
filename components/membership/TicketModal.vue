@@ -37,19 +37,6 @@
               />
             </VCol>
 
-            <!-- 고유번호 (필수) -->
-            <VCol cols="12" md="6">
-              <VSelect
-                v-model="form.uniqueCodeId"
-                label="고유번호*"
-                :items="uniqueCodeOptions"
-                variant="outlined"
-                :rules="uniqueCodeRules"
-                required
-                :error-messages="errors.uniqueCodeId"
-              />
-            </VCol>
-
             <!-- 티켓명 (필수) -->
             <VCol cols="12">
               <VTextField
@@ -227,6 +214,55 @@
               </VRow>
             </VCol>
 
+            <!-- 일일 제한 -->
+            <VCol cols="12">
+              <VRow>
+                <VCol cols="12" md="6">
+                  <VSelect
+                    v-model="form.usageLimit.daily.type"
+                    label="일일 예약 제한*"
+                    :items="dailyLimitOptions"
+                    variant="outlined"
+                    required
+                    :disabled="form.isFamilyTicket"
+                  />
+                </VCol>
+                <VCol cols="12" md="6">
+                  <VTextField
+                    v-model.number="form.usageLimit.daily.value"
+                    label="일일 제한 횟수*"
+                    type="number"
+                    variant="outlined"
+                    suffix="회"
+                    min="1"
+                    :disabled="form.usageLimit.daily.type !== '직접입력' || form.isFamilyTicket"
+                  />
+                </VCol>
+              </VRow>
+            </VCol>
+
+            <!-- 패밀리 수강권 설정 -->
+            <VCol cols="12">
+              <h4 class="text-h6 mb-4">패밀리 수강권 설정</h4>
+            </VCol>
+            <VCol cols="12" md="6">
+              <VSwitch
+                v-model="form.isFamilyTicket"
+                color="primary"
+                label="패밀리 수강권 여부"
+              />
+            </VCol>
+            <VCol cols="12" md="6" v-if="form.isFamilyTicket">
+              <VTextField
+                v-model.number="form.concurrentParticipants"
+                label="동시간 이용 가능 인원*"
+                type="number"
+                variant="outlined"
+                min="1"
+                suffix="명"
+              />
+            </VCol>
+
             <!-- 예약 시간 설정 -->
             <VCol cols="12">
               <h4 class="text-h6 mb-4">예약 시간 설정</h4>
@@ -259,6 +295,30 @@
                 type="time"
                 variant="outlined"
                 :rules="endTimeRules"
+              />
+            </VCol>
+
+            <VCol cols="12" md="6">
+              <VSelect
+                v-model="form.reservationTime.weekdays"
+                label="예약 가능 요일"
+                :items="weekdayOptions"
+                variant="outlined"
+                multiple
+                chips
+                closable-chips
+              />
+            </VCol>
+
+            <!-- 당일 예약 변경 횟수 -->
+            <VCol cols="12" md="6">
+              <VTextField
+                v-model.number="form.sameDayChangeLimit"
+                label="당일 예약 변경 가능 횟수"
+                type="number"
+                variant="outlined"
+                suffix="회"
+                min="0"
               />
             </VCol>
 
@@ -345,6 +405,10 @@ const getDefaultForm = () => ({
   maxParticipantsNumber: undefined as number | undefined,
   price: undefined as number | undefined,
   usageLimit: {
+    daily: {
+      type: '1회' as any,
+      value: 1 as number | undefined
+    },
     weekly: {
       type: '제한없음' as any,
       value: undefined as number | undefined
@@ -357,8 +421,12 @@ const getDefaultForm = () => ({
   reservationTime: {
     type: '하루종일' as any,
     startTime: undefined as string | undefined,
-    endTime: undefined as string | undefined
+    endTime: undefined as string | undefined,
+    weekdays: ['월','화','수','목','금','토','일'] as string[]
   },
+  isFamilyTicket: false,
+  concurrentParticipants: undefined as number | undefined,
+  sameDayChangeLimit: undefined as number | undefined,
   uniqueCodeIds: [] as number[]
 })
 
@@ -370,8 +438,7 @@ const errors = ref({
   usageCount: [] as string[],
   validityPeriod: [] as string[],
   price: [] as string[],
-  maxParticipants: [] as string[],
-  uniqueCodeId: [] as string[]
+  maxParticipants: [] as string[]
 })
 
 // 계산된 속성
@@ -417,9 +484,28 @@ const monthlyLimitOptions = [
   { title: '직접입력', value: '직접입력' }
 ]
 
+const dailyLimitOptions = [
+  { title: '제한없음', value: '제한없음' },
+  { title: '1회', value: '1회' },
+  { title: '2회', value: '2회' },
+  { title: '3회', value: '3회' },
+  { title: '4회', value: '4회' },
+  { title: '직접입력', value: '직접입력' }
+]
+
 const reservationTimeOptions = [
   { title: '하루종일', value: '하루종일' },
   { title: '시간대지정', value: '시간대지정' }
+]
+
+const weekdayOptions = [
+  { title: '월', value: '월' },
+  { title: '화', value: '화' },
+  { title: '수', value: '수' },
+  { title: '목', value: '목' },
+  { title: '금', value: '금' },
+  { title: '토', value: '토' },
+  { title: '일', value: '일' }
 ]
 
 // 검증 규칙
@@ -480,8 +566,7 @@ const resetForm = () => {
     usageCount: [],
     validityPeriod: [],
     price: [],
-    maxParticipants: [],
-    uniqueCodeId: []
+    maxParticipants: []
   }
   formRef.value?.resetValidation()
 }
@@ -502,7 +587,10 @@ const loadFormData = () => {
       price: item.price,
       usageLimit: { ...item.usageLimit },
       reservationTime: { ...item.reservationTime },
-      uniqueCodeIds: item.uniqueCodeIds || []
+      uniqueCodeIds: item.uniqueCodeIds || [],
+      isFamilyTicket: item.isFamilyTicket,
+      concurrentParticipants: item.concurrentParticipants,
+      sameDayChangeLimit: item.sameDayChangeLimit
     }
   } else {
     resetForm()
@@ -533,6 +621,10 @@ const prepareFormData = () => {
     maxParticipants,
     price: form.value.price!,
     usageLimit: {
+      daily: {
+        type: form.value.isFamilyTicket ? '제한없음' : form.value.usageLimit.daily.type,
+        value: form.value.isFamilyTicket ? undefined : (form.value.usageLimit.daily.type === '직접입력' ? form.value.usageLimit.daily.value : undefined)
+      },
       weekly: {
         type: form.value.usageLimit.weekly.type,
         value: form.value.usageLimit.weekly.type === '직접입력' ? form.value.usageLimit.weekly.value : undefined
@@ -545,8 +637,12 @@ const prepareFormData = () => {
     reservationTime: {
       type: form.value.reservationTime.type,
       startTime: form.value.reservationTime.type === '시간대지정' ? form.value.reservationTime.startTime : undefined,
-      endTime: form.value.reservationTime.type === '시간대지정' ? form.value.reservationTime.endTime : undefined
+      endTime: form.value.reservationTime.type === '시간대지정' ? form.value.reservationTime.endTime : undefined,
+      weekdays: form.value.reservationTime.weekdays
     },
+    isFamilyTicket: form.value.isFamilyTicket,
+    concurrentParticipants: form.value.isFamilyTicket ? form.value.concurrentParticipants : undefined,
+    sameDayChangeLimit: form.value.sameDayChangeLimit,
     uniqueCodeIds: form.value.uniqueCodeIds
   }
 
@@ -588,8 +684,7 @@ const handleSubmit = async () => {
       usageCount: [],
       validityPeriod: [],
       price: [],
-      maxParticipants: [],
-      uniqueCodeId: []
+      maxParticipants: []
     }
 
     const formData = prepareFormData()

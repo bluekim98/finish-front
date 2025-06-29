@@ -33,6 +33,10 @@ export type ValidityPeriod = {
 }
 
 export type UsageLimit = {
+  daily?: {
+    type: '제한없음' | '1회' | '2회' | '3회' | '4회' | '직접입력'
+    value?: number
+  }
   weekly: {
     type: '제한없음' | '1회' | '2회' | '3회' | '4회' | '직접입력'
     value?: number // 직접입력일 때 사용
@@ -47,6 +51,7 @@ export type ReservationTime = {
   type: '시간대지정' | '하루종일'
   startTime?: string // 30분 단위 (09:00, 09:30, ...)
   endTime?: string // 30분 단위
+  weekdays?: string[]
 }
 
 export interface Ticket {
@@ -62,6 +67,9 @@ export interface Ticket {
   price: number // 필수: 판매 가격 (원화)
   usageLimit: UsageLimit // 필수: 이용 횟수 제한
   reservationTime: ReservationTime // 필수: 예약 가능한 시간
+  isFamilyTicket?: boolean
+  concurrentParticipants?: number
+  sameDayChangeLimit?: number
   uniqueCodeIds: number[] // 필수: 연결된 고유번호 ID 배열
   createdAt: string
   updatedAt: string
@@ -79,6 +87,9 @@ export interface CreateTicketRequest {
   price: number
   usageLimit: UsageLimit
   reservationTime: ReservationTime
+  isFamilyTicket?: boolean
+  concurrentParticipants?: number
+  sameDayChangeLimit?: number
   uniqueCodeIds: number[]
 }
 

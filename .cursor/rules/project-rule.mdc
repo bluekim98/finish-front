@@ -3,18 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Project Rules
-
-## Overview
-
-This project is a backoffice application for managing data related to a screen golf facility's membership and reservation system. The primary goal is to provide an administrative interface for the main user-facing application.
-
-## Key Features (Current Scope)
-
--   Screen design and layout implementation.
--   Login, session, and cookie management are functional and integrated.
--   API integration for core business logic is pending.
--   Focus on establishing the foundational structure and UX/UI before full-scale development.
+# 프로젝트 구조 가이드
 
 ## Technical Stack
 
@@ -23,150 +12,80 @@ This project is a backoffice application for managing data related to a screen g
 -   **Language:** TypeScript
 -   **Package Manager:** pnpm
 
-## Development Status
+---
 
--   Currently in the screen design and layout phase.
--   API integration for most features is not yet implemented.
+## 1. 최상위 디렉터리 요약
 
-## Development Guidelines
+| Directory | Purpose | 주요 규칙 |
+|-----------|---------|-----------|
+| `pages/` | **라우트 엔트리**.<br/>Nuxt 3 파일 시스템 라우팅이 적용됩니다. | • 기능 단위 하위 폴더를 사용합니다.<br/>• `index.vue`(목록) ↔ `[id].vue`(상세)와 같은 RESTful 구조 권장 |
+| `components/` | **페이지 내부 UI 구성요소** 모음 | • 파일명 **PascalCase**.<br/>• 기능별 하위폴더(`components/membership/` 등) 생성.<br/>• 전역 컴포넌트는 `components/global/` 고려 |
+| `composables/` | **비즈니스 로직 & 상태 관리** | • 파일명 `useXxx.ts` 패턴.<br/>• UI 없는 순수 로직만 위치.<br/>• 동일 로직 재사용 시 최우선 탐색 위치 |
+| `layouts/` | Nuxt 레이아웃(`default.vue`, `blank.vue`) 및 관련 파트 | • 레이아웃-전용 컴포넌트는 `layouts/components/` |
+| `@layouts/`, `@core/` | 서드파티 템플릿 및 테마 오버라이드 | • 직접 수정 최소화 → 추가 커스텀은 `layouts/` 또는 프로젝트 폴더에서 덮어쓰기 |
+| `plugins/` | Nuxt 플러그인 등록 | • Vuetify, Iconify, Dayjs 등 초기화 코드 위치 |
+| `assets/` | 정적 리소스(이미지, SCSS 변수 등) | • 스타일 변수 → `assets/styles/variables/` |
+| `types/` | **전역/API 타입 정의** | • API 통합 전이라도 feature 단위 `types/foo.ts` 작성 |
+| `utils/` | **순수 헬퍼 함수** | • Vue/Composable 영역을 참조하지 않는 범용 로직 |
+| `server/` | Nuxt Server Routes & 미들웨어 | • API 프록시 및 헬퍼는 `server/utils/` |
 
-### 1. Package Management
--   **Exclusive Use of pnpm:** This project uses **pnpm as the sole package manager**.
-    -   **All commands must use pnpm:** `pnpm install`, `pnpm run dev`, `pnpm run build`, etc.
-    -   **Never use npm or yarn:** Avoid `npm install`, `npm run`, `yarn install`, `yarn run`, etc.
-    -   **Dependencies:** Add packages using `pnpm add <package>` or `pnpm add -D <package>` for dev dependencies.
-    -   **Scripts:** Execute package scripts using `pnpm run <script-name>`.
--   **Lock File:** Always commit `pnpm-lock.yaml` and never commit `package-lock.json` or `yarn.lock`.
--   **Version Consistency:** Ensure all team members use pnpm to maintain consistent dependency resolution.
-
-### 2. Codebase Reference
--   **Always refer to the existing codebase structure and patterns**, especially within:
-    -   `pages/admin/` and its related components.
-    -   `pages/membership/` and its related components/pages.
--   Follow established patterns for page routing (see `layouts/`, `components/` and `pages/` structure).
-
-### 3. UI Components & Data Display
--   **Tables:** For displaying tabular data, use Vuetify's **`VTable` component**.
--   **Pagination:** Combine `VTable` with the **`VPagination` component** for navigating through data sets.
-    -   *Reference Implementation:* `components/membership/MembershipList.vue`
--   Leverage Vuetify's pre-built components as much as possible.
--   Follow Vuetify's official documentation for component usage.
--   Customize Vuetify themes and styles through Nuxt configuration.
-
-### 4. State Management
--   **Primary Approach:** Utilize **Nuxt 3's built-in state management capabilities** (e.g., `useState`, `ref`, `computed`, composables).
--   **Initial Prototyping:** For UI design and prototyping, prioritize using **component-local state (`ref`, `computed`)** and static/inline dummy data.
--   **Global State:** If global state or complex cross-component logic becomes necessary:
-    -   First, look for existing patterns within `pages/admin/` or `pages/membership/`.
-    -   Alternatively, discuss and decide on using `composables/` (e.g. `useCustomState()`) for such logic, following Nuxt 3 best practices.
--   **Third-party Libraries:** **Avoid introducing external state management libraries (like Pinia, Vuex, etc.)** without explicit prior discussion and approval.
-
-### 5. TypeScript & Typing
--   **Minimal Types for UI Design:** During the UI design phase (before API integration), use TypeScript types minimally.
-    -   Inline types, `any`, or simple component-local `interface` definitions are acceptable.
--   **API-Driven Types:** The primary source for data types will be code generated from the API server specifications.
-    -   Therefore, **avoid creating extensive, separate global type definition files** (e.g., in a `/types` directory) at this stage.
--   **Linting:** Linter checks and error reporting should **focus primarily on TypeScript (`.ts`) files**. For `.vue` files, TypeScript errors within `<script lang="ts">` blocks will be addressed, but template or style linting is out of scope for AI assistance unless specifically requested.
-
-### 6. Component Design & Naming
--   **File Naming:** Vue component files: **PascalCase** (e.g., `UserProfileCard.vue`).
--   **Props Naming:** Prop names: **camelCase** (e.g., `userName`).
--   **Events Naming:** Custom event names: **kebab-case** (e.g., `item-selected`).
--   **Modularity & Reusability:** Design components to be modular and reusable.
--   **Directory Structure (Example):**
-    -   `components/global/`: Globally registered components.
-    -   `components/ui/`: General UI elements.
-    -   `components/[feature]/`: Feature-specific components (e.g., `components/membership/MembershipTable.vue`).
-    -   *Refer to existing `components/` structure for guidance.*
-
-### 7. Styling
--   Use Vuetify's utility classes for common styling needs.
--   For custom styles, prefer scoped CSS (`<style scoped>`).
--   Define consistent color palettes and typography via Vuetify's theming.
-
-## General Principles
--   **Consistency:** Maintain a consistent look and feel.
--   **Clarity:** Ensure UI is intuitive.
--   **Efficiency:** Design for minimal user effort.
--   **Accessibility:** Adhere to basic accessibility standards.
+> 위 목록에 없는 새 디렉터리가 필요할 경우 **README에 근거**를 남기고 리뷰어와 사전 합의합니다.
 
 ---
 
-## Data & API Integration Rules
+## 2. 컴포넌트 • 페이지 • 컴포저블 관계
 
-### 8. Data Management Strategy
--   **Prototyping Phase:** Use **hardcoded/mock data** for rapid UI development and testing.
-    -   Example: `const mockData = [{ id: 1, title: 'Sample' }]`
--   **Mock Data Location:** Keep mock data close to components or in dedicated mock files within feature directories.
--   **Data Structure:** Ensure mock data structure matches expected API response format for easier transition.
+```
+pages/[feature]/index.vue ─┐
+                           │   import/use
+pages/[feature]/[id].vue ──┤──► components/[feature]/**.vue
+                           │
+                           └──► composables/use[Feature].ts
+```
 
-### 9. Business Logic Separation
--   **Separation of Concerns:** Strictly separate business logic from UI rendering logic.
-    -   **UI Logic:** Component state, form handling, user interactions → Vue components
-    -   **Business Logic:** Data processing, API calls, validation → Composables
--   **Composables Pattern:** Use Nuxt 3 composables for reusable business logic.
-    ```typescript
-    // composables/useFeature.ts
-    export const useFeature = () => {
-      const data = useState('feature-data', () => [])
-      
-      const processData = () => { /* business logic */ }
-      const validateForm = () => { /* validation logic */ }
-      
-      return { data, processData, validateForm }
-    }
-    ```
+* **pages** 는 최상위 컨테이너 역할만 수행합니다. 복잡한 로직은 **composables** 로 이동, 재사용 가능한 UI 는 **components** 로 분리합니다.
 
-### 10. Type Management for API Integration
--   **Dedicated Type Files:** Create separate type definition files in `types/` directory for API data structures.
--   **API-Ready Types:** Design types to be compatible with future API server integration.
-    ```typescript
-    // types/feature.ts
-    export interface ApiResponse<T> {
-      data: T
-      message: string
-      status: number
-    }
-    
-    export interface FeatureItem {
-      id: number
-      title: string
-      createdAt: string
-      updatedAt: string
-    }
-    ```
--   **Import Pattern:** Import types consistently across the application.
-    ```typescript
-    import type { FeatureItem } from '~/types/feature'
-    ```
+---
 
-### 11. Development Architecture
--   **Layered Structure:** Follow consistent file organization for features:
-    ```
-    types/[feature].ts           → Type definitions
-    composables/use[Feature].ts  → Business logic & state management
-    components/[feature]/        → UI components
-    pages/[feature]/            → Route pages
-    ```
--   **Future API Integration:** Structure code to easily replace mock data with API calls:
-    ```typescript
-    // composables/useFeature.ts
-    const fetchData = async () => {
-      // TODO: Replace with actual API call
-      return mockData
-    }
-    ```
+## 3. 네이밍 & 코딩 컨벤션
 
-### 12. Form Validation & Complex Logic
--   **Conditional Validation:** Handle complex validation rules within composables.
--   **Form State Management:** Use Nuxt's reactive state for form handling.
--   **Error Handling:** Prepare error handling structure for future API integration.
-    ```typescript
-    const { data, error, pending } = await $fetch('/api/endpoint')
-    ```
+1. **Vue 파일**: `PascalCase.vue` (예: `UserProfileCard.vue`)
+2. **Composable**: `useXxx.ts` (예: `useMembership.ts`)
+3. **Props**: `camelCase`  |  **Emit 이벤트**: `kebab-case`
+4. **Vuetify 컴포넌트**: `V` + `PascalCase` (예: `VTabs`, `VTable`)
+5. **아이콘**: Iconify CSS(`plugins/iconify/icons.css`)에 정의된 이름 사용
 
-### 13. Development Best Practices
--   **Progressive Enhancement:** Build features incrementally (mock → logic → API).
--   **Code Comments:** Mark sections that need API integration with `// TODO: API integration`.
--   **Consistent Patterns:** Follow established patterns for similar features across the application.
--   **Testing Ready:** Structure code to be easily testable when testing is implemented.
+---
+
+## 4. 디자인 시스템
+
+- **UI 프레임워크**: Vuetify 3
+- **Theme 설정**: `plugins/vuetify/theme.ts` 에서 색상 팔레트 관리
+- **컴포넌트 스타일 커스터마이징**: `@core/scss` 및 `@layouts/styles` 의 SCSS 오버라이드 활용
+
+---
+
+## 5. 기능 추가 시 체크리스트
+
+1. **디렉터리 생성** : `pages/<feature>/`, `components/<feature>/`, `composables/use<Feature>.ts`, `types/<feature>.ts`
+2. **라우트 정의**  : `pages/<feature>/index.vue` 기본 목록 페이지 추가
+3. **Mock 데이터**  : API 미통합 단계에서는 컴포저블 또는 컴포넌트에 하드코딩 데이터 사용(`mockData`)
+4. **상태 관리**   : Nuxt `useState` / `ref` / `computed` 기반, 외부 상태관리 라이브러리 도입 금지
+5. **스타일 가이드** : Vuetify 컴포넌트 + SCSS 유틸리티 클래스 우선 사용
+
+---
+
+## 6. 금지/주의사항
+
+- **npm / yarn** 대신 **pnpm** 고정 사용
+- 디렉터리 루트에 **package-lock.json**, **yarn.lock** 생성 금지
+- 전역 스코프에서 **대형 컴포넌트/로직** 무분별한 선언 자제 → 반드시 feature 폴더로 국한
+- **SSR-영향 코드**(브라우저 전용 API 사용 등)는 `<client-only>` 혹은 `process.client` 가드 필수
+
+---
+
+### 📝 유지보수 TIP
+
+> 구조가 불분명하거나 새 카테고리가 필요한 경우, **프로젝트 구조 가이드**에 먼저 규칙을 제안하고 팀 코드리뷰를 통해 합의 후 병합하세요.
+
+## Always provide a step-by-step plan before proceeding with any task.

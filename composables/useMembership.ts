@@ -233,15 +233,7 @@ export const useMembership = () => {
     
     const newTicket: Ticket = {
       id: newId,
-      type: data.type,
-      title: data.title,
-      usageCount: data.usageCount,
-      validityPeriod: data.validityPeriod,
-      maxParticipants: data.maxParticipants,
-      price: data.price,
-      usageLimit: data.usageLimit,
-      reservationTime: data.reservationTime,
-      uniqueCodeIds: data.uniqueCodeIds,
+      ...data,
       createdAt: now,
       updatedAt: now
     }
@@ -258,16 +250,7 @@ export const useMembership = () => {
 
     const existingItem = tickets.value[index]!
     const updatedTicket: Ticket = {
-      id: existingItem.id,
-      type: data.type,
-      title: data.title,
-      usageCount: data.usageCount,
-      validityPeriod: data.validityPeriod,
-      maxParticipants: data.maxParticipants,
-      price: data.price,
-      usageLimit: data.usageLimit,
-      reservationTime: data.reservationTime,
-      uniqueCodeIds: data.uniqueCodeIds,
+      ...data,
       createdAt: existingItem.createdAt,
       updatedAt: new Date().toISOString()
     }
