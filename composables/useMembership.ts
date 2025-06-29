@@ -55,14 +55,18 @@ const mockTickets: Ticket[] = [
     maxParticipants: 'unlimited',
     price: 150000,
     usageLimit: {
+      daily: { type: '제한없음' },
       weekly: { type: '제한없음' },
       monthly: { type: '제한없음' }
     },
     reservationTime: {
       type: '시간대지정',
       startTime: '09:00',
-      endTime: '21:00'
+      endTime: '21:00',
+      weekdays: ['월', '화', '수', '목', '금']
     },
+    isFamilyTicket: false,
+    sameDayChangeLimit: 0,
     uniqueCodeIds: [1],
     createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2024-01-15T09:00:00Z'
@@ -78,12 +82,17 @@ const mockTickets: Ticket[] = [
     maxParticipants: 'unlimited',
     price: 200000,
     usageLimit: {
+      daily: { type: '제한없음' },
       weekly: { type: '제한없음' },
       monthly: { type: '제한없음' }
     },
     reservationTime: {
-      type: '하루종일'
+      type: '하루종일',
+      weekdays: ['월', '화', '수', '목', '금', '토', '일']
     },
+    isFamilyTicket: true,
+    concurrentParticipants: 4,
+    sameDayChangeLimit: 1,
     uniqueCodeIds: [1, 2],
     createdAt: '2024-01-16T10:30:00Z',
     updatedAt: '2024-01-16T10:30:00Z'

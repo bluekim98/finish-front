@@ -33,6 +33,7 @@ export type ValidityPeriod = {
 }
 
 export type UsageLimit = {
+  /** 일일 예약 제한 (없을 수도 있음 – 기존 데이터 호환) */
   daily?: {
     type: '제한없음' | '1회' | '2회' | '3회' | '4회' | '직접입력'
     value?: number

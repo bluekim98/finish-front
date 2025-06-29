@@ -406,16 +406,16 @@ const getDefaultForm = () => ({
   price: undefined as number | undefined,
   usageLimit: {
     daily: {
-      type: '1회' as any,
-      value: 1 as number | undefined
+      type: '1회',
+      value: 1
     },
     weekly: {
-      type: '제한없음' as any,
-      value: undefined as number | undefined
+      type: '제한없음',
+      value: undefined
     },
     monthly: {
-      type: '제한없음' as any,
-      value: undefined as number | undefined
+      type: '제한없음',
+      value: undefined
     }
   },
   reservationTime: {
@@ -721,9 +721,13 @@ const handleSubmit = async () => {
 
 const handleClose = () => {
   if (loading.value) return
-  
-  resetForm()
+
+  // 먼저 모달을 닫고 다음 tick 에 폼을 초기화하여
+  // UI 업데이트 간 충돌을 방지한다.
   closeTicketModal()
+  nextTick(() => {
+    resetForm()
+  })
 }
 
 // 유효기간 타입 변경 시 days 업데이트
