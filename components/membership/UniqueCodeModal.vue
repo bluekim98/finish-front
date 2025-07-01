@@ -83,8 +83,6 @@ const {
   closeUniqueCodeModal
 } = useMembership()
 
-const { $toast } = useNuxtApp()
-
 // 폼 ref
 const formRef = ref()
 
@@ -157,7 +155,6 @@ const handleSubmit = async () => {
       }
       
       await updateUniqueCode(updateData)
-      $toast?.success('고유번호가 수정되었습니다.')
     } else {
       // 생성 모드
       const createData: CreateUniqueCodeRequest = {
@@ -166,23 +163,11 @@ const handleSubmit = async () => {
       }
       
       await createUniqueCode(createData)
-      $toast?.success('고유번호가 생성되었습니다.')
     }
 
     handleClose()
   } catch (error) {
     console.error('저장 실패:', error)
-    
-    if (error instanceof Error) {
-      $toast?.error(error.message)
-      
-      // 서버 검증 에러 처리 (향후 API 연동 시 사용)
-      if (error.message.includes('title')) {
-        errors.value.title = [error.message]
-      }
-    } else {
-      $toast?.error('저장에 실패했습니다.')
-    }
   } finally {
     loading.value = false
   }

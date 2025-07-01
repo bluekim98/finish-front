@@ -175,8 +175,6 @@ const {
   getSchedulesByUniqueCodeId
 } = useMembership()
 
-const { $toast } = useNuxtApp()
-
 // 상태
 const search = ref('')
 const currentPage = ref(1)
@@ -268,11 +266,9 @@ const confirmDelete = async () => {
     deleteDialog.value.loading = true
     await deleteUniqueCode(deleteDialog.value.item.id)
     
-    $toast?.success('고유번호가 삭제되었습니다.')
     closeDeleteDialog()
   } catch (error) {
     console.error('삭제 실패:', error)
-    $toast?.error(error instanceof Error ? error.message : '삭제에 실패했습니다.')
   } finally {
     deleteDialog.value.loading = false
   }

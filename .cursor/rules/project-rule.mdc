@@ -7,35 +7,35 @@ alwaysApply: true
 
 ## Technical Stack
 
--   **Framework:** Nuxt 3
--   **UI Library:** Vuetify
--   **Language:** TypeScript
--   **Package Manager:** pnpm
+* **Framework:** Nuxt 3
+* **UI Library:** Vuetify
+* **Language:** TypeScript
+* **Package Manager:** pnpm
 
 ---
 
 ## 1. 최상위 디렉터리 요약
 
-| Directory | Purpose | 주요 규칙 |
-|-----------|---------|-----------|
-| `pages/` | **라우트 엔트리**.<br/>Nuxt 3 파일 시스템 라우팅이 적용됩니다. | • 기능 단위 하위 폴더를 사용합니다.<br/>• `index.vue`(목록) ↔ `[id].vue`(상세)와 같은 RESTful 구조 권장 |
-| `components/` | **페이지 내부 UI 구성요소** 모음 | • 파일명 **PascalCase**.<br/>• 기능별 하위폴더(`components/membership/` 등) 생성.<br/>• 전역 컴포넌트는 `components/global/` 고려 |
-| `composables/` | **비즈니스 로직 & 상태 관리** | • 파일명 `useXxx.ts` 패턴.<br/>• UI 없는 순수 로직만 위치.<br/>• 동일 로직 재사용 시 최우선 탐색 위치 |
-| `layouts/` | Nuxt 레이아웃(`default.vue`, `blank.vue`) 및 관련 파트 | • 레이아웃-전용 컴포넌트는 `layouts/components/` |
-| `@layouts/`, `@core/` | 서드파티 템플릿 및 테마 오버라이드 | • 직접 수정 최소화 → 추가 커스텀은 `layouts/` 또는 프로젝트 폴더에서 덮어쓰기 |
-| `plugins/` | Nuxt 플러그인 등록 | • Vuetify, Iconify, Dayjs 등 초기화 코드 위치 |
-| `assets/` | 정적 리소스(이미지, SCSS 변수 등) | • 스타일 변수 → `assets/styles/variables/` |
-| `types/` | **전역/API 타입 정의** | • API 통합 전이라도 feature 단위 `types/foo.ts` 작성 |
-| `utils/` | **순수 헬퍼 함수** | • Vue/Composable 영역을 참조하지 않는 범용 로직 |
-| `server/` | Nuxt Server Routes & 미들웨어 | • API 프록시 및 헬퍼는 `server/utils/` |
+| Directory             | Purpose                                       | 주요 규칙                                                                                                     |
+| --------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `pages/`              | **라우트 엔트리**. Nuxt 3 파일 시스템 라우팅이 적용됩니다.        | • 기능 단위 하위 폴더 사용<br/>• `index.vue`(목록) ↔ `[id].vue`(상세) 같은 RESTful 구조 권장                                  |
+| `components/`         | **페이지 내부 UI 구성요소** 모음                         | • 파일명 **PascalCase**<br/>• 기능별 하위폴더(`components/membership/` 등) 생성<br/>• 전역 컴포넌트는 `components/global/` 고려 |
+| `composables/`        | **비즈니스 로직 & 상태 관리**                           | • 파일명 `useXxx.ts` 패턴<br/>• UI 없는 순수 로직만 위치<br/>• 동일 로직 재사용 시 최우선 탐색 위치                                    |
+| `layouts/`            | Nuxt 레이아웃(`default.vue`, `blank.vue`) 및 관련 파트 | • 레이아웃 전용 컴포넌트는 `layouts/components/`                                                                     |
+| `@layouts/`, `@core/` | 서드파티 템플릿 및 테마 오버라이드                           | • 직접 수정 최소화 → 추가 커스텀은 `layouts/` 또는 프로젝트 폴더에서 덮어쓰기                                                        |
+| `plugins/`            | Nuxt 플러그인 등록                                  | • Vuetify, Iconify, Dayjs 등 초기화 코드 위치                                                                     |
+| `assets/`             | 정적 리소스(이미지, SCSS 변수 등)                        | • 스타일 변수 → `assets/styles/variables/`                                                                     |
+| `types/`              | **전역/API 타입 정의**                              | • API 통합 전이라도 feature 단위 `types/foo.ts` 작성                                                                |
+| `utils/`              | **순수 헬퍼 함수**                                  | • Vue/Composable 영역을 참조하지 않는 범용 로직                                                                        |
+| `server/`             | Nuxt Server Routes & 미들웨어                     | • API 프록시 및 헬퍼는 `server/utils/`                                                                           |
 
 > 위 목록에 없는 새 디렉터리가 필요할 경우 **README에 근거**를 남기고 리뷰어와 사전 합의합니다.
 
 ---
 
-## 2. 컴포넌트 • 페이지 • 컴포저블 관계
+## 2. 컴포넌트 · 페이지 · 컴포저블 관계
 
-```
+```text
 pages/[feature]/index.vue ─┐
                            │   import/use
 pages/[feature]/[id].vue ──┤──► components/[feature]/**.vue
@@ -43,7 +43,8 @@ pages/[feature]/[id].vue ──┤──► components/[feature]/**.vue
                            └──► composables/use[Feature].ts
 ```
 
-* **pages** 는 최상위 컨테이너 역할만 수행합니다. 복잡한 로직은 **composables** 로 이동, 재사용 가능한 UI 는 **components** 로 분리합니다.
+* **pages** 는 최상위 컨테이너 역할만 수행합니다.
+  복잡한 로직은 **composables** 로 이동, 재사용 가능한 UI 는 **components** 로 분리합니다.
 
 ---
 
@@ -59,33 +60,79 @@ pages/[feature]/[id].vue ──┤──► components/[feature]/**.vue
 
 ## 4. 디자인 시스템
 
-- **UI 프레임워크**: Vuetify 3
-- **Theme 설정**: `plugins/vuetify/theme.ts` 에서 색상 팔레트 관리
-- **컴포넌트 스타일 커스터마이징**: `@core/scss` 및 `@layouts/styles` 의 SCSS 오버라이드 활용
+* **UI 프레임워크**: Vuetify 3
+* **Theme 설정**: `plugins/vuetify/theme.ts` 에서 색상 팔레트 관리
+* **컴포넌트 스타일 커스터마이징**: `@core/scss` 및 `@layouts/styles` 의 SCSS 오버라이드 활용
 
 ---
 
 ## 5. 기능 추가 시 체크리스트
 
-1. **디렉터리 생성** : `pages/<feature>/`, `components/<feature>/`, `composables/use<Feature>.ts`, `types/<feature>.ts`
-2. **라우트 정의**  : `pages/<feature>/index.vue` 기본 목록 페이지 추가
-3. **Mock 데이터**  : API 미통합 단계에서는 컴포저블 또는 컴포넌트에 하드코딩 데이터 사용(`mockData`)
-4. **상태 관리**   : Nuxt `useState` / `ref` / `computed` 기반, 외부 상태관리 라이브러리 도입 금지
-5. **스타일 가이드** : Vuetify 컴포넌트 + SCSS 유틸리티 클래스 우선 사용
+1. **디렉터리 생성**: `pages/<feature>/`, `components/<feature>/`, `composables/use<Feature>.ts`, `types/<feature>.ts`
+2. **라우트 정의**: `pages/<feature>/index.vue` 기본 목록 페이지 추가
+3. **Mock 데이터**: API 미통합 단계에서는 컴포저블 또는 컴포넌트에 하드코딩 데이터 사용(`mockData`)
+4. **상태 관리**: Nuxt `useState` / `ref` / `computed` 기반, 외부 상태관리 라이브러리 도입 금지
+5. **스타일 가이드**: Vuetify 컴포넌트 + SCSS 유틸리티 클래스 우선 사용
 
 ---
 
 ## 6. 금지/주의사항
 
-- **npm / yarn** 대신 **pnpm** 고정 사용
-- 디렉터리 루트에 **package-lock.json**, **yarn.lock** 생성 금지
-- 전역 스코프에서 **대형 컴포넌트/로직** 무분별한 선언 자제 → 반드시 feature 폴더로 국한
-- **SSR-영향 코드**(브라우저 전용 API 사용 등)는 `<client-only>` 혹은 `process.client` 가드 필수
+* **npm / yarn** 대신 **pnpm** 사용 고정
+* 루트에 **package-lock.json**, **yarn.lock** 생성 금지
+* 전역 스코프에서 **대형 컴포넌트/로직** 무분별한 선언 자제 → feature 폴더로 국한
+* **SSR-영향 코드**(브라우저 전용 API 사용 등)는 `<client-only>` 혹은 `process.client` 가드 필수
 
 ---
 
-### 📝 유지보수 TIP
+## 7. SOLID 원칙 요약
 
-> 구조가 불분명하거나 새 카테고리가 필요한 경우, **프로젝트 구조 가이드**에 먼저 규칙을 제안하고 팀 코드리뷰를 통해 합의 후 병합하세요.
+* **S**: 단일 책임 (Single Responsibility)
 
-## Always provide a step-by-step plan before proceeding with any task.
+  * 컴포넌트, composable, API는 각자 하나의 책임만 가진다.
+
+* **O**: 개방-폐쇄 (Open/Closed)
+
+  * 공통 컴포넌트는 props/slot으로 확장 가능하게 설계.
+  * 수정보다 확장으로 기능 추가.
+
+* **L**: 리스코프 치환 (Liskov Substitution)
+
+  * 컴포넌트는 상위 컴포넌트를 대체할 수 있어야 함.
+  * 동일한 props/event 구조 유지.
+
+* **I**: 인터페이스 분리 (Interface Segregation)
+
+  * 필요한 기능만 나눠서 사용.
+  * props나 기능이 많아지면 분리.
+
+* **D**: 의존 역전 (Dependency Inversion)
+
+  * API 호출은 composable에서 추상화.
+  * 외부 의존은 wrapper로 감싸서 사용.
+
+---
+
+## 8. 데이터 조회 · 상태 관리 · UI 분리 지시 템플릿
+
+### 1. 데이터 조회
+
+* **API 엔드포인트**:
+
+  * `server/api/` 안에 `user.ts` 등 서버 핸들러 작성
+  * 클라이언트에서 `useFetch('/api/user')` 또는 `useAsyncData`로 호출
+
+### 2. 상태 관리
+
+* **useState** (또는 Pinia):
+
+  * `composables/` 폴더에 정의
+  * `const userStore = defineStore('user', { state, actions })`
+  * 데이터 보관 및 가공 로직 수행
+
+### 3. UI 컴포넌트
+
+* **components/**:
+
+  * 오직 props + 이벤트로만 그려질 뷰 컴포넌트
+  * 예: `UserList.vue` → `userStore`, `useFetch` 결과 바인딩

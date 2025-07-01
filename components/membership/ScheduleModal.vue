@@ -1,11 +1,11 @@
 <template>
   <VDialog
-    :model-value="props.show"
+    :model-value="show"
     @update:model-value="$emit('update:show', $event)"
     max-width="800"
     persistent
   >
-    <VCard>
+    <VCard class="d-flex flex-column" style="max-height:95vh">
       <!-- 모달 헤더 -->
       <VCardTitle class="d-flex align-center pa-6 pb-4 bg-grey-50">
         <VIcon
@@ -16,7 +16,7 @@
       </VCardTitle>
 
       <!-- 모달 내용 -->
-      <VCardText class="pa-6 pt-4">
+      <VCardText class="pa-6 pt-4 flex-grow-1 overflow-y-auto">
         <VForm ref="formRef" @submit.prevent="handleSubmit">
           <!-- 기본 정보 -->
           <h4 class="text-h6 mb-4">기본 정보</h4>
@@ -25,7 +25,6 @@
               <VTextField
                 v-model="form.title"
                 label="일정명*"
-                placeholder="일정의 제목을 입력하세요"
                 variant="outlined"
                 :rules="[v => !!v || '일정명은 필수입니다']"
               />
@@ -34,8 +33,7 @@
             <VCol cols="12" md="6">
               <VTextField
                 v-model="form.instructor"
-                label="담당강사"
-                placeholder="담당 강사명을 입력하세요"
+                label="담당 강사"
                 variant="outlined"
                 clearable
               />
@@ -44,107 +42,28 @@
             <VCol cols="12">
               <VTextarea
                 v-model="form.description"
-                label="일정설명*"
-                placeholder="일정에 대한 상세 설명을 입력하세요"
+                label="일정 설명*"
                 variant="outlined"
                 rows="3"
-                :rules="[v => !!v || '일정설명은 필수입니다']"
+                :rules="[v => !!v || '일정 설명은 필수입니다']"
               />
             </VCol>
           </VRow>
 
-          <!-- 인원 및 장소 -->
-          <h4 class="text-h6 mb-4 mt-6">인원 및 장소</h4>
+          <!-- 기간 & 요일 -->
+          <h4 class="text-h6 mb-4 mt-6">기간</h4>
           <VRow>
             <VCol cols="12" md="6">
-              <VRow>
-                <VCol cols="12">
-                  <VSelect
-                    v-model="form.maxParticipantsType"
-                    label="최대 인원*"
-                    :items="[
-                      { title: '무제한', value: 'unlimited' },
-                      { title: '직접 입력', value: 'custom' }
-                    ]"
-                    variant="outlined"
-                  />
-                </VCol>
-                <VCol cols="12" v-if="form.maxParticipantsType === 'custom'">
-                  <VTextField
-                    v-model.number="form.maxParticipants"
-                    label="인원 수*"
-                    type="number"
-                    variant="outlined"
-                    suffix="명"
-                    min="1"
-                    :rules="[
-                      v => form.maxParticipantsType === 'unlimited' || !!v || '인원 수를 입력하세요',
-                      v => form.maxParticipantsType === 'unlimited' || v > 0 || '1명 이상이어야 합니다'
-                    ]"
-                  />
-                </VCol>
-              </VRow>
-            </VCol>
-
-            <VCol cols="12" md="6">
-              <VTextField
-                v-model="form.location"
-                label="장소"
-                placeholder="수업 진행 장소"
-                variant="outlined"
-                clearable
-              />
-            </VCol>
-          </VRow>
-
-          <!-- 시간 정보 -->
-          <h4 class="text-h6 mb-4 mt-6">시간 정보</h4>
-          <VRow>
-            <VCol cols="12">
               <vue-date-picker
                 v-model="form.dateRange"
                 range
-                :format="dateFormat"
-                locale="ko"
                 :enable-time-picker="false"
-                auto-apply
-                :text-input="true"
-                :placeholder="'시작일 ~ 종료일'"
-                :rules="[v => !!v || '기간은 필수입니다']"
-                :week-start="0"
-                :month-change-on-scroll="false"
-                :calendar-cell-class-name="'dp__calendar-cell'"
-                :preview-format="(date) => dayjs(date).format('YYYY.MM.DD')"
-                :menu-class-name="'dp__menu'"
-                :calendar-class-name="'dp__calendar'"
-                :action-row-class-name="'dp__action-row'"
-                :input-class-name="'dp__input'"
-                :inline-input-class-name="'dp__inline-input'"
-                :calendar-header-class-name="'dp__calendar-header'"
-                :calendar-row-class-name="'dp__calendar-row'"
-                :calendar-header-separator-class-name="'dp__calendar-header-separator'"
-                :calendar-weekday-class-name="'dp__calendar-weekday'"
-                :calendar-month-class-name="'dp__calendar-month'"
-                :calendar-year-class-name="'dp__calendar-year'"
-                :calendar-decade-class-name="'dp__calendar-decade'"
-                :action-preview-class-name="'dp__action-preview'"
-                :action-buttons-class-name="'dp__action-buttons'"
-                :action-button-class-name="'dp__action-button'"
-                :action-select-class-name="'dp__action-select'"
-                :action-cancel-class-name="'dp__action-cancel'"
-                :month-year-select-class-name="'dp__month-year-select'"
-                :month-year-header-class-name="'dp__month-year-header'"
-                :time-picker-class-name="'dp__time-picker'"
-                :time-picker-header-class-name="'dp__time-picker-header'"
-                :time-picker-input-class-name="'dp__time-picker-input'"
-                :time-picker-column-class-name="'dp__time-picker-column'"
-                :time-picker-cell-class-name="'dp__time-picker-cell'"
+                locale="ko"
               >
                 <template #trigger>
                   <VTextField
-                    :model-value="form.dateRange ? formatDateRange(form.dateRange) : ''"
+                    :model-value="displayDateRange"
                     label="기간*"
-                    placeholder="시작일 ~ 종료일"
                     variant="outlined"
                     readonly
                     :rules="[v => !!v || '기간은 필수입니다']"
@@ -156,118 +75,119 @@
                 </template>
               </vue-date-picker>
             </VCol>
-
-            <VCol cols="12">
-              <VRow>
-                <VCol cols="12">
-                  <VSelect
-                    v-model="form.timeType"
-                    label="시간 설정"
-                    :items="[
-                      { title: '하루종일', value: 'allday' },
-                      { title: '시간 지정', value: 'custom' }
-                    ]"
-                    variant="outlined"
-                  />
-                </VCol>
-                <VCol v-if="form.timeType === 'custom'" cols="12" md="6">
-                  <VTextField
-                    v-model="form.startTime"
-                    label="시작 시간"
-                    type="time"
-                    variant="outlined"
-                    :rules="timeRules"
-                  />
-                </VCol>
-                <VCol v-if="form.timeType === 'custom'" cols="12" md="6">
-                  <VTextField
-                    v-model="form.endTime"
-                    label="종료 시간"
-                    type="time"
-                    variant="outlined"
-                    :rules="timeRules"
-                  />
-                </VCol>
-              </VRow>
-            </VCol>
-          </VRow>
-
-          <!-- 예약/취소 설정 -->
-          <h4 class="text-h6 mb-4 mt-6">예약/취소 설정</h4>
-          <VRow>
-            <!-- 예약 마감 시간 설정 -->
             <VCol cols="12" md="6">
-              <VRow>
-                <VCol cols="12">
-                  <VSwitch
-                    v-model="form.hasReservationDeadline"
-                    label="예약 마감 시간 설정"
-                    color="primary"
-                    hide-details
-                  />
-                </VCol>
-                <VCol v-if="form.hasReservationDeadline" cols="12">
-                  <VTextField
-                    v-model.number="form.reservationDeadlineHours"
-                    label="예약 마감 시간*"
-                    type="number"
-                    variant="outlined"
-                    suffix="시간 전"
-                    min="1"
-                    :rules="[
-                      v => !form.hasReservationDeadline || !!v || '예약 마감 시간을 입력하세요',
-                      v => !form.hasReservationDeadline || v > 0 || '1시간 이상이어야 합니다'
-                    ]"
-                  />
-                </VCol>
-              </VRow>
-            </VCol>
-
-            <!-- 취소 마감 시간 설정 -->
-            <VCol cols="12" md="6">
-              <VRow>
-                <VCol cols="12">
-                  <VSwitch
-                    v-model="form.hasCancellationDeadline"
-                    label="취소 마감 시간 설정"
-                    color="primary"
-                    hide-details
-                  />
-                </VCol>
-                <VCol v-if="form.hasCancellationDeadline" cols="12">
-                  <VTextField
-                    v-model.number="form.cancellationDeadlineHours"
-                    label="취소 마감 시간*"
-                    type="number"
-                    variant="outlined"
-                    suffix="시간 전"
-                    min="1"
-                    :rules="[
-                      v => !form.hasCancellationDeadline || !!v || '취소 마감 시간을 입력하세요',
-                      v => !form.hasCancellationDeadline || v > 0 || '1시간 이상이어야 합니다'
-                    ]"
-                  />
-                </VCol>
-              </VRow>
-            </VCol>
-          </VRow>
-
-          <!-- 연결 정보 -->
-          <h4 class="text-h6 mb-4 mt-6">연결 정보</h4>
-          <VRow>
-            <VCol cols="12">
               <VSelect
-                v-model="form.uniqueCodeIds"
-                label="고유번호*"
-                :items="uniqueCodeOptions"
-                variant="outlined"
+                v-model="form.weekdays"
+                :items="weekdayOptions"
+                label="요일(선택)"
                 multiple
                 chips
-                closable-chips
-                :rules="[v => v.length > 0 || '고유번호는 필수입니다']"
+                variant="outlined"
               />
             </VCol>
           </VRow>
+
+          <!-- 시간 -->
+          <h4 class="text-h6 mb-4 mt-6">시간</h4>
+          <VRow>
+            <VCol cols="12" md="4">
+              <VSelect
+                v-model="form.timeType"
+                :items="timeTypeOptions"
+                label="시간 설정"
+                variant="outlined"
+              />
+            </VCol>
+            <VCol v-if="form.timeType === 'custom'" cols="12" md="4">
+              <VTextField
+                v-model="form.startTime"
+                type="time"
+                label="시작 시간*"
+                variant="outlined"
+                :rules="timeRules"
+              />
+            </VCol>
+            <VCol v-if="form.timeType === 'custom'" cols="12" md="4">
+              <VTextField
+                v-model="form.endTime"
+                type="time"
+                label="종료 시간*"
+                variant="outlined"
+                :rules="timeRules"
+              />
+            </VCol>
+          </VRow>
+
+          <!-- 인원 & 장소 -->
+          <h4 class="text-h6 mb-4 mt-6">인원 및 장소</h4>
+          <VRow>
+            <VCol cols="12" md="6">
+              <VSelect
+                v-model="form.maxParticipantsType"
+                :items="maxParticipantsTypeOptions"
+                label="최대 인원*"
+                variant="outlined"
+              />
+            </VCol>
+            <VCol v-if="form.maxParticipantsType === 'custom'" cols="12" md="6">
+              <VTextField
+                v-model.number="form.maxParticipants"
+                type="number"
+                label="인원 수*"
+                variant="outlined"
+                suffix="명"
+                :rules="participantRules"
+              />
+            </VCol>
+            <VCol cols="12" class="mt-4">
+              <VTextField
+                v-model="form.location"
+                label="장소"
+                variant="outlined"
+                clearable
+              />
+            </VCol>
+          </VRow>
+
+          <!-- 예약/취소 마감 -->
+          <h4 class="text-h6 mb-4 mt-6">예약 / 취소 마감</h4>
+          <VRow>
+            <VCol cols="12" md="6">
+              <VSwitch v-model="form.hasReservationDeadline" label="예약 마감 사용" hide-details />
+              <VTextField
+                v-if="form.hasReservationDeadline"
+                v-model.number="form.reservationDeadlineHours"
+                type="number"
+                label="예약 마감 (시간 전)"
+                variant="outlined"
+                :rules="deadlineRules(form.hasReservationDeadline)"
+              />
+            </VCol>
+            <VCol cols="12" md="6">
+              <VSwitch v-model="form.hasCancellationDeadline" label="취소 마감 사용" hide-details />
+              <VTextField
+                v-if="form.hasCancellationDeadline"
+                v-model.number="form.cancellationDeadlineHours"
+                type="number"
+                label="취소 마감 (시간 전)"
+                variant="outlined"
+                :rules="deadlineRules(form.hasCancellationDeadline)"
+              />
+            </VCol>
+          </VRow>
+
+          <!-- 고유번호 연결 -->
+          <h4 class="text-h6 mb-4 mt-6">연결 고유번호</h4>
+          <VSelect
+            v-model="form.uniqueCodeIds"
+            :items="uniqueCodeOptions"
+            label="고유번호*"
+            multiple
+            chips
+            closable-chips
+            variant="outlined"
+            :rules="[v => (v as number[]).length > 0 || '최소 1개 이상 선택']"
+          />
         </VForm>
       </VCardText>
 
@@ -278,7 +198,6 @@
           variant="text"
           color="secondary"
           @click="$emit('update:show', false)"
-          class="bg-secondary-50"
         >
           취소
         </VBtn>
@@ -287,7 +206,6 @@
           @click="handleSubmit"
           :loading="isSubmitting"
           variant="text"
-          class="bg-primary-25"
         >
           {{ isEdit ? '수정' : '추가' }}
         </VBtn>
@@ -312,8 +230,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Emits
 const emit = defineEmits<{
-  'update:show': [value: boolean]
-  'submit': [data: Partial<Schedule>]
+  'update:show': [boolean]
+  submit: [Partial<Schedule>]
 }>()
 
 // Composables
@@ -333,6 +251,11 @@ const uniqueCodeOptions = computed(() => {
   }))
 })
 
+const displayDateRange = computed(() => {
+  if (!props.editData?.period) return ''
+  return `${dayjs(props.editData.period.startDate).format('YYYY.MM.DD')} ~ ${dayjs(props.editData.period.endDate).format('YYYY.MM.DD')}`
+})
+
 // 폼 상태
 const form = ref({
   title: '',
@@ -349,7 +272,8 @@ const form = ref({
   hasReservationDeadline: false,
   reservationDeadlineHours: null as number | null,
   hasCancellationDeadline: false,
-  cancellationDeadlineHours: null as number | null
+  cancellationDeadlineHours: null as number | null,
+  weekdays: [] as string[]
 })
 
 // 유효성 검사 규칙
@@ -357,15 +281,26 @@ const timeRules = [
   (v: string) => form.value.timeType === 'allday' || !!v || '시간을 입력하세요'
 ]
 
-// Date Picker 설정
-const dateFormat = (date: Date) => {
-  return dayjs(date).format('YYYY.MM.DD')
-}
+const participantRules = [
+  (v: number) => form.value.maxParticipantsType === 'unlimited' || !!v || '인원 수 입력',
+  (v: number) => form.value.maxParticipantsType === 'unlimited' || v > 0 || '1명 이상'
+]
 
-const formatDateRange = (dateRange: [Date, Date]) => {
-  if (!dateRange || !Array.isArray(dateRange) || dateRange.length !== 2) return ''
-  return `${dayjs(dateRange[0]).format('YYYY.MM.DD')} ~ ${dayjs(dateRange[1]).format('YYYY.MM.DD')}`
-}
+const deadlineRules = (enabled: boolean) => [
+  (v: number) => !enabled || !!v || '필수 입력',
+  (v: number) => !enabled || v > 0 || '1이상'
+]
+
+// 옵션 상수들 (템플릿에서 사용)
+const weekdayOptions = ['월', '화', '수', '목', '금', '토', '일']
+const timeTypeOptions = [
+  { title: '하루종일', value: 'allday' },
+  { title: '시간 지정', value: 'custom' }
+]
+const maxParticipantsTypeOptions = [
+  { title: '무제한', value: 'unlimited' },
+  { title: '직접 입력', value: 'custom' }
+]
 
 // Methods
 const resetForm = () => {
@@ -384,38 +319,44 @@ const resetForm = () => {
     hasReservationDeadline: false,
     reservationDeadlineHours: null,
     hasCancellationDeadline: false,
-    cancellationDeadlineHours: null
+    cancellationDeadlineHours: null,
+    weekdays: []
   }
 }
 
-const initEditData = () => {
+const initFormFromEditData = () => {
   if (!props.editData) return
-
   const { 
-    startDate, 
-    endDate, 
-    startTime, 
-    endTime, 
+    title, 
+    instructor, 
+    description, 
     maxParticipants,
-    reservationDeadlineHours,
-    cancellationDeadlineHours,
+    location,
+    period,
+    time,
+    reservationCancelPolicy,
     uniqueCodeIds,
     ...rest 
   } = props.editData
   
   form.value = {
     ...rest,
-    dateRange: [new Date(startDate), new Date(endDate)],
-    timeType: startTime && endTime ? 'custom' : 'allday',
+    title,
+    instructor: instructor ?? '',
+    description,
     maxParticipantsType: maxParticipants === 'unlimited' ? 'unlimited' : 'custom',
     maxParticipants: maxParticipants === 'unlimited' ? null : Number(maxParticipants),
-    startTime: startTime || '',
-    endTime: endTime || '',
-    uniqueCodeIds: uniqueCodeIds || [],
-    hasReservationDeadline: !!reservationDeadlineHours,
-    reservationDeadlineHours: reservationDeadlineHours || null,
-    hasCancellationDeadline: !!cancellationDeadlineHours,
-    cancellationDeadlineHours: cancellationDeadlineHours || null
+    location: location ?? '',
+    dateRange: [new Date(period.startDate), new Date(period.endDate)],
+    timeType: time ? 'custom' : 'allday',
+    startTime: time?.startTime ?? '',
+    endTime: time?.endTime ?? '',
+    uniqueCodeIds: [...uniqueCodeIds],
+    hasReservationDeadline: !!reservationCancelPolicy?.absolute?.hours,
+    reservationDeadlineHours: reservationCancelPolicy?.absolute?.hours ?? null,
+    hasCancellationDeadline: false,
+    cancellationDeadlineHours: null,
+    weekdays: period.weekdays ?? []
   }
 }
 
@@ -425,20 +366,23 @@ const handleSubmit = async () => {
 
   isSubmitting.value = true
   try {
-    const formData = {
-      ...form.value,
-      startDate: form.value.dateRange?.[0].toISOString(),
-      endDate: form.value.dateRange?.[1].toISOString(),
-      maxParticipants: form.value.maxParticipantsType === 'unlimited' 
-        ? 'unlimited' 
-        : form.value.maxParticipants,
-      startTime: form.value.timeType === 'custom' ? form.value.startTime : null,
-      endTime: form.value.timeType === 'custom' ? form.value.endTime : null,
-      reservationDeadlineHours: form.value.hasReservationDeadline ? form.value.reservationDeadlineHours : null,
-      cancellationDeadlineHours: form.value.hasCancellationDeadline ? form.value.cancellationDeadlineHours : null
+    const payload: Partial<Schedule> = {
+      title: form.value.title.trim(),
+      instructor: form.value.instructor.trim() || undefined,
+      description: form.value.description.trim(),
+      maxParticipants: form.value.maxParticipantsType === 'unlimited' ? 'unlimited' : (form.value.maxParticipants ?? 0),
+      location: form.value.location || undefined,
+      period: {
+        startDate: form.value.dateRange![0].toISOString().substring(0,10),
+        endDate: form.value.dateRange![1].toISOString().substring(0,10),
+        weekdays: form.value.weekdays.length ? form.value.weekdays : undefined
+      },
+      time: form.value.timeType === 'custom' ? { startTime: form.value.startTime, endTime: form.value.endTime } : undefined,
+      reservationCancelPolicy: form.value.hasReservationDeadline ? { enabled: true, absolute: { hours: form.value.reservationDeadlineHours! } } : undefined,
+      uniqueCodeIds: [...form.value.uniqueCodeIds]
     }
 
-    emit('submit', formData)
+    emit('submit', payload)
     emit('update:show', false)
     resetForm()
   } finally {
@@ -449,7 +393,7 @@ const handleSubmit = async () => {
 // Watchers
 watch(() => props.show, (show) => {
   if (show && props.editData) {
-    initEditData()
+    initFormFromEditData()
   } else if (!show) {
     resetForm()
   }
@@ -458,7 +402,16 @@ watch(() => props.show, (show) => {
 // 초기화
 onMounted(() => {
   if (props.editData) {
-    initEditData()
+    initFormFromEditData()
   }
 })
-</script> 
+</script>
+
+<style scoped>
+.v-card {
+  overflow: hidden;
+}
+.v-card-text {
+  scrollbar-width: thin;
+}
+</style> 

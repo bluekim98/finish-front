@@ -125,7 +125,7 @@
                     size="small"
                     variant="text"
                     color="secondary"
-                    @click="deleteTicket(ticket)"
+                    @click="confirmDelete(ticket)"
                   >
                     <VIcon icon="ri-delete-bin-line" />
                   </VBtn>
@@ -143,7 +143,7 @@
             새로운 티켓을 추가해보세요.
           </p>
           <VBtn
-            v-if="!search"
+            v-if="!searchQuery"
             color="primary"
             variant="text"
             @click="openCreateModal"
@@ -204,6 +204,8 @@
 import type { Ticket } from '~/types/membership'
 import TicketModal from './TicketModal.vue'
 import dayjs from 'dayjs'
+import { toRaw } from 'vue'
+import type { DeepReadonly } from 'vue'
 
 // Composables
 const { 
@@ -212,10 +214,7 @@ const {
   deleteTicket,
   getUniqueCodeById,
   openTicketModal,
-  ticketModal
 } = useMembership()
-
-const { $toast } = useNuxtApp()
 
 // 상태
 const searchQuery = ref('')
@@ -263,9 +262,9 @@ const filteredTickets = computed(() => {
   }
 
   // 고유번호 필터링
-  if (selectedUniqueCode.value) {
-    filtered = filtered.filter(ticket => 
-      ticket.uniqueCodeIds.includes(selectedUniqueCode.value)
+  if (selectedUniqueCode.value !== undefined) {
+    filtered = filtered.filter(ticket =>
+      ticket.uniqueCodeIds.includes(selectedUniqueCode.value as number)
     )
   }
 
@@ -292,14 +291,15 @@ const openCreateModal = () => {
   openTicketModal('create')
 }
 
-const openEditModal = (ticket: Ticket) => {
-  openTicketModal('edit', ticket)
+const openEditModal = (ticket: Ticket | DeepReadonly<Ticket>) => {
+  const rawTicket = toRaw(ticket) as Ticket
+  openTicketModal('edit', { ...rawTicket })
 }
 
-const confirmDelete = (ticket: Ticket) => {
+const confirmDelete = (ticket: Ticket | DeepReadonly<Ticket>) => {
   deleteDialog.value = {
     show: true,
-    item: ticket,
+    item: toRaw(ticket) as Ticket,
     loading: false
   }
 }
@@ -318,15 +318,9 @@ const executeDelete = async () => {
   try {
     deleteDialog.value.loading = true
     await deleteTicket(deleteDialog.value.item.id)
-    $toast?.success('티켓이 삭제되었습니다.')
     cancelDelete()
   } catch (error) {
     console.error('삭제 실패:', error)
-    if (error instanceof Error) {
-      $toast?.error(error.message)
-    } else {
-      $toast?.error('티켓 삭제에 실패했습니다.')
-    }
   } finally {
     deleteDialog.value.loading = false
   }

@@ -370,7 +370,8 @@
 </template>
 
 <script setup lang="ts">
-import type { CreateTicketRequest, UpdateTicketRequest, TicketType, ValidityPeriod } from '~/types/membership'
+import type { CreateTicketRequest, UpdateTicketRequest, TicketType, ValidityPeriod, Ticket } from '~/types/membership'
+import { toRaw } from 'vue'
 
 // Composables
 const { 
@@ -380,8 +381,6 @@ const {
   updateTicket,
   closeTicketModal
 } = useMembership()
-
-const { $toast } = useNuxtApp()
 
 // 폼 ref
 const formRef = ref()
@@ -573,7 +572,31 @@ const resetForm = () => {
 
 const loadFormData = () => {
   if (isEditMode.value && modal.value.item) {
-    const item = modal.value.item
+    // DeepReadonly<Ticket> 에서 mutable 사본 추출
+    const item = toRaw(modal.value.item) as Ticket
+
+    const normalizedUsageLimit = {
+      daily: {
+        type: item.usageLimit.daily?.type ?? '제한없음',
+        value: item.usageLimit.daily?.value ?? 1
+      },
+      weekly: {
+        type: item.usageLimit.weekly.type,
+        value: item.usageLimit.weekly.value
+      },
+      monthly: {
+        type: item.usageLimit.monthly.type,
+        value: item.usageLimit.monthly.value
+      }
+    } as any
+
+    const normalizedReservationTime = {
+      type: item.reservationTime.type,
+      startTime: item.reservationTime.startTime,
+      endTime: item.reservationTime.endTime,
+      weekdays: [...(item.reservationTime.weekdays ?? [])]
+    }
+
     form.value = {
       type: item.type,
       title: item.title,
@@ -583,12 +606,12 @@ const loadFormData = () => {
       },
       validityPeriod: { ...item.validityPeriod },
       isUnlimitedParticipants: item.maxParticipants === 'unlimited',
-      maxParticipantsNumber: item.maxParticipants === 'unlimited' ? undefined : item.maxParticipants as number,
+      maxParticipantsNumber: item.maxParticipants === 'unlimited' ? undefined : (item.maxParticipants as number),
       price: item.price,
-      usageLimit: { ...item.usageLimit },
-      reservationTime: { ...item.reservationTime },
-      uniqueCodeIds: item.uniqueCodeIds || [],
-      isFamilyTicket: item.isFamilyTicket,
+      usageLimit: normalizedUsageLimit,
+      reservationTime: normalizedReservationTime,
+      uniqueCodeIds: [...item.uniqueCodeIds],
+      isFamilyTicket: item.isFamilyTicket ?? false,
       concurrentParticipants: item.concurrentParticipants,
       sameDayChangeLimit: item.sameDayChangeLimit
     }
@@ -697,23 +720,16 @@ const handleSubmit = async () => {
       } as UpdateTicketRequest
       
       await updateTicket(updateData)
-      $toast?.success('티켓이 수정되었습니다.')
     } else {
       // 생성 모드
       const createData = formData as CreateTicketRequest
       await createTicket(createData)
-      $toast?.success('티켓이 생성되었습니다.')
     }
 
     handleClose()
   } catch (error) {
     console.error('저장 실패:', error)
     
-    if (error instanceof Error) {
-      $toast?.error(error.message)
-    } else {
-      $toast?.error('저장에 실패했습니다.')
-    }
   } finally {
     loading.value = false
   }

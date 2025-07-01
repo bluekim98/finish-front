@@ -75,10 +75,10 @@
                 <span v-if="schedule.instructor">{{ schedule.instructor }}</span>
                 <span v-else class="text-grey">-</span>
               </td>
-              <td>{{ formatDateRange(schedule.startDate, schedule.endDate) }}</td>
+              <td>{{ formatDateRange(schedule.period.startDate, schedule.period.endDate) }}</td>
               <td>
-                <span v-if="schedule.startTime && schedule.endTime">
-                  {{ formatTimeRange(schedule.startTime, schedule.endTime) }}
+                <span v-if="schedule.time">
+                  {{ formatTimeRange(schedule.time.startTime, schedule.time.endTime) }}
                 </span>
                 <span v-else class="text-grey">하루종일</span>
               </td>
@@ -193,13 +193,14 @@
 import type { Schedule } from '~/types/membership'
 import dayjs from 'dayjs'
 import ScheduleModal from './ScheduleModal.vue'
+import { toRaw } from 'vue'
+import type { DeepReadonly } from 'vue'
 
 // Composables
 const { 
   schedules,
   uniqueCodes,
   getUniqueCodeById,
-  getSchedulesByUniqueCodeId,
   createSchedule,
   updateSchedule,
   deleteSchedule
@@ -261,9 +262,9 @@ const filteredSchedules = computed(() => {
   }
 
   // 고유번호 필터링
-  if (selectedUniqueCode.value) {
-    result = result.filter(schedule => 
-      schedule.uniqueCodeIds.includes(selectedUniqueCode.value)
+  if (selectedUniqueCode.value !== null) {
+    result = result.filter(schedule =>
+      schedule.uniqueCodeIds.includes(selectedUniqueCode.value as number)
     )
   }
 
@@ -303,15 +304,15 @@ const openCreateModal = () => {
   showModal.value = true
 }
 
-const openEditModal = (schedule: Schedule) => {
-  editSchedule.value = schedule
+const openEditModal = (schedule: Schedule | DeepReadonly<Schedule>) => {
+  editSchedule.value = toRaw(schedule) as Schedule
   showModal.value = true
 }
 
-const confirmDelete = (schedule: Schedule) => {
+const confirmDelete = (schedule: Schedule | DeepReadonly<Schedule>) => {
   deleteDialog.value = {
     show: true,
-    schedule,
+    schedule: toRaw(schedule) as Schedule,
     loading: false
   }
 }
@@ -319,15 +320,13 @@ const confirmDelete = (schedule: Schedule) => {
 const handleSubmit = async (data: Partial<Schedule>) => {
   try {
     if (editSchedule.value) {
-      await updateSchedule(editSchedule.value.id, data)
-      $toast.success('일정이 수정되었습니다.')
+      const updatePayload = { id: editSchedule.value.id, ...data } as any
+      await updateSchedule(updatePayload)
     } else {
-      await createSchedule(data)
-      $toast.success('일정이 생성되었습니다.')
+      await createSchedule(data as any)
     }
   } catch (error) {
     console.error('Failed to save schedule:', error)
-    $toast.error('일정 저장에 실패했습니다.')
   }
 }
 
@@ -338,10 +337,8 @@ const handleDelete = async () => {
   try {
     await deleteSchedule(deleteDialog.value.schedule.id)
     deleteDialog.value.show = false
-    $toast.success('일정이 삭제되었습니다.')
   } catch (error) {
     console.error('Failed to delete schedule:', error)
-    $toast.error('일정 삭제에 실패했습니다.')
   } finally {
     deleteDialog.value.loading = false
   }
