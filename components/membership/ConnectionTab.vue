@@ -129,10 +129,10 @@
                 </VBtn>
               </div>
               <div class="schedule-details text-caption">
-                <div>{{ formatDateRange(schedule.startDate, schedule.endDate) }}</div>
+                <div>{{ formatDateRange(schedule.period.startDate, schedule.period.endDate) }}</div>
                 <div class="mt-1">
-                  <template v-if="schedule.timeType === 'custom'">
-                    {{ schedule.startTime }} ~ {{ schedule.endTime }}
+                  <template v-if="schedule.time">
+                    {{ schedule.time.startTime }} ~ {{ schedule.time.endTime }}
                   </template>
                   <template v-else>
                     하루종일
@@ -249,6 +249,8 @@
 import { computed, ref } from 'vue'
 import type { Ticket, Schedule, UniqueCode } from '~/types/membership'
 import dayjs from 'dayjs'
+import { toRaw } from 'vue'
+import type { DeepReadonly } from 'vue'
 
 // Composables
 const { uniqueCodes, tickets, schedules, updateTicket, updateSchedule } = useMembership()
@@ -345,21 +347,22 @@ const addTicketConnections = async () => {
   )
 
   // 각 티켓에 고유번호 추가
-  for (const ticket of selectedTickets) {
-    await updateTicket({
-      ...ticket,
-      uniqueCodeIds: [...ticket.uniqueCodeIds, codeId]
-    })
+  for (const t of selectedTickets) {
+    const raw = toRaw(t) as Ticket
+    const newIds = [...raw.uniqueCodeIds]
+    if (!newIds.includes(codeId)) newIds.push(codeId)
+    await updateTicket({ ...raw, uniqueCodeIds: newIds } as any)
   }
 
   ticketDialog.value.show = false
 }
 
-const removeTicketConnection = async (ticket: Ticket, code: UniqueCode) => {
+const removeTicketConnection = async (ticket: Ticket | DeepReadonly<Ticket>, code: UniqueCode) => {
+  const raw = toRaw(ticket) as Ticket
   await updateTicket({
-    ...ticket,
-    uniqueCodeIds: ticket.uniqueCodeIds.filter(id => id !== code.id)
-  })
+    ...raw,
+    uniqueCodeIds: raw.uniqueCodeIds.filter(id => id !== code.id)
+  } as any)
 }
 
 // 일정 연결 관리
@@ -380,21 +383,22 @@ const addScheduleConnections = async () => {
   )
 
   // 각 일정에 고유번호 추가
-  for (const schedule of selectedSchedules) {
-    await updateSchedule({
-      ...schedule,
-      uniqueCodeIds: [...schedule.uniqueCodeIds, codeId]
-    })
+  for (const s of selectedSchedules) {
+    const raw = toRaw(s) as Schedule
+    const newIds = [...raw.uniqueCodeIds]
+    if (!newIds.includes(codeId)) newIds.push(codeId)
+    await updateSchedule({ ...raw, uniqueCodeIds: newIds } as any)
   }
 
   scheduleDialog.value.show = false
 }
 
-const removeScheduleConnection = async (schedule: Schedule, code: UniqueCode) => {
+const removeScheduleConnection = async (schedule: Schedule | DeepReadonly<Schedule>, code: UniqueCode) => {
+  const raw = toRaw(schedule) as Schedule
   await updateSchedule({
-    ...schedule,
-    uniqueCodeIds: schedule.uniqueCodeIds.filter(id => id !== code.id)
-  })
+    ...raw,
+    uniqueCodeIds: raw.uniqueCodeIds.filter(id => id !== code.id)
+  } as any)
 }
 </script>
 
