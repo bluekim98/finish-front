@@ -60,7 +60,7 @@
               <th class="text-left">일정명</th>
               <th class="text-left">담당강사</th>
               <th class="text-left">기간</th>
-              <th class="text-left">시간</th>
+              <th class="text-left">시간대</th>
               <th class="text-left">최대인원</th>
               <th class="text-left">장소</th>
               <th class="text-left">고유번호</th>
@@ -77,10 +77,7 @@
               </td>
               <td>{{ formatDateRange(schedule.period.startDate, schedule.period.endDate) }}</td>
               <td>
-                <span v-if="schedule.time">
-                  {{ formatTimeRange(schedule.time.startTime, schedule.time.endTime) }}
-                </span>
-                <span v-else class="text-grey">하루종일</span>
+                {{ formatTimeSlots(schedule) }}
               </td>
               <td>
                 {{ schedule.maxParticipants === 'unlimited' ? '무제한' : `${schedule.maxParticipants}명` }}
@@ -190,7 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Schedule } from '~/types/membership'
+import type { Schedule, Weekday, TimeSlot } from '~/types/membership'
 import dayjs from 'dayjs'
 import ScheduleModal from './ScheduleModal.vue'
 import { toRaw } from 'vue'
@@ -286,8 +283,13 @@ const formatDateRange = (startDate: string, endDate: string) => {
   return `${dayjs(startDate).format('YYYY.MM.DD')} ~ ${dayjs(endDate).format('YYYY.MM.DD')}`
 }
 
-const formatTimeRange = (startTime: string, endTime: string) => {
-  return `${startTime} ~ ${endTime}`
+const formatTimeSlots = (s: any) => {
+  if (!s.timeSlots || Object.keys(s.timeSlots).length === 0) return '하루종일'
+
+  return Object.entries(s.timeSlots as Partial<Record<Weekday, TimeSlot[]>>)
+    .filter(([, arr]) => arr && arr.length)
+    .map(([day, arr]) => `${day} ${arr!.map(tt => `${tt.start}~${tt.end}`).join(',')}`)
+    .join('; ')
 }
 
 const getUniqueCodeTitle = (uniqueCodeId: number) => {

@@ -1,9 +1,9 @@
 <template>
   <VDialog
     :model-value="show"
-    @update:model-value="$emit('update:show', $event)"
-    max-width="800"
+    max-width="95vw"
     persistent
+    @update:model-value="$emit('update:show', $event)"
   >
     <VCard class="d-flex flex-column" style="max-height:95vh">
       <!-- 모달 헤더 -->
@@ -87,34 +87,52 @@
             </VCol>
           </VRow>
 
-          <!-- 시간 -->
+          <!-- 시간 (요일별 슬롯) -->
           <h4 class="text-h6 mb-4 mt-6">시간</h4>
           <VRow>
-            <VCol cols="12" md="4">
-              <VSelect
-                v-model="form.timeType"
-                :items="timeTypeOptions"
-                label="시간 설정"
-                variant="outlined"
-              />
-            </VCol>
-            <VCol v-if="form.timeType === 'custom'" cols="12" md="4">
-              <VTextField
-                v-model="form.startTime"
-                type="time"
-                label="시작 시간*"
-                variant="outlined"
-                :rules="timeRules"
-              />
-            </VCol>
-            <VCol v-if="form.timeType === 'custom'" cols="12" md="4">
-              <VTextField
-                v-model="form.endTime"
-                type="time"
-                label="종료 시간*"
-                variant="outlined"
-                :rules="timeRules"
-              />
+            <VCol cols="12" v-for="day in weekdayOptions" :key="day">
+              <VCard variant="outlined" class="mb-2">
+                <VCardText class="pb-4">
+                  <div class="d-flex align-center mb-2">
+                    <strong class="mr-3" style="width:40px">{{ day }}</strong>
+                    <VBtn icon size="small" variant="text" @click="addTimeSlot(day as Weekday)">
+                      <VIcon icon="ri-add-line" />
+                    </VBtn>
+                  </div>
+
+                  <div v-if="form.timeSlots[day as Weekday] && form.timeSlots[day as Weekday]!.length">
+                    <div
+                      v-for="(slot, idx) in form.timeSlots[day as Weekday]"
+                      :key="idx"
+                      class="d-flex align-center mb-2"
+                    >
+                      <VTextField
+                        v-model="slot.start"
+                        type="time"
+                        label="시작"
+                        density="compact"
+                        variant="outlined"
+                        class="mr-2"
+                        style="max-width:120px"
+                      />
+                      <span class="mx-1">~</span>
+                      <VTextField
+                        v-model="slot.end"
+                        type="time"
+                        label="종료"
+                        density="compact"
+                        variant="outlined"
+                        class="ml-2 mr-2"
+                        style="max-width:120px"
+                      />
+                      <VBtn icon size="small" variant="text" color="secondary" @click="removeTimeSlot(day as Weekday, idx)">
+                        <VIcon icon="ri-close-line" />
+                      </VBtn>
+                    </div>
+                  </div>
+                  <div v-else class="text-grey text-caption ml-2">하루종일</div>
+                </VCardText>
+              </VCard>
             </VCol>
           </VRow>
 
@@ -149,29 +167,100 @@
             </VCol>
           </VRow>
 
-          <!-- 예약/취소 마감 -->
-          <h4 class="text-h6 mb-4 mt-6">예약 / 취소 마감</h4>
+          <!-- 예약 / 취소 설정 -->
+          <h4 class="text-h6 mb-4 mt-6">예약 / 취소 설정</h4>
+          <VRow>
+            <!-- 예약 정책 -->
+            <VCol cols="12" md="6">
+              <VCard variant="outlined">
+                <VCardText>
+                  <div class="d-flex align-center mb-3">
+                    <strong class="mr-2">예약 설정</strong>
+                    <VSwitch v-model="form.hasReservationDeadline" inset hide-details />
+                  </div>
+                  <div v-if="form.hasReservationDeadline">
+                    <h6 class="text-body-2 mb-2">시작</h6>
+                    <VRow class="mb-3" dense>
+                      <VCol cols="4">
+                        <VTextField v-model.number="form.reservationPolicy.open.value" type="number" label="값" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.reservationPolicy.open.unit" :items="unitOptions" label="단위" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.reservationPolicy.open.from" :items="baseOptions" label="기준" density="compact" variant="outlined" />
+                      </VCol>
+                    </VRow>
+                    <h6 class="text-body-2 mb-2">마감</h6>
+                    <VRow dense>
+                      <VCol cols="4">
+                        <VTextField v-model.number="form.reservationPolicy.close.value" type="number" label="값" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.reservationPolicy.close.unit" :items="unitOptions" label="단위" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.reservationPolicy.close.from" :items="baseOptions" label="기준" density="compact" variant="outlined" />
+                      </VCol>
+                    </VRow>
+                  </div>
+                </VCardText>
+              </VCard>
+            </VCol>
+
+            <!-- 취소 정책 -->
+            <VCol cols="12" md="6">
+              <VCard variant="outlined">
+                <VCardText>
+                  <div class="d-flex align-center mb-3">
+                    <strong class="mr-2">취소 설정</strong>
+                    <VSwitch v-model="form.hasCancellationDeadline" inset hide-details />
+                  </div>
+                  <div v-if="form.hasCancellationDeadline">
+                    <h6 class="text-body-2 mb-2">시작</h6>
+                    <VRow class="mb-3" dense>
+                      <VCol cols="4">
+                        <VTextField v-model.number="form.cancellationPolicy.open.value" type="number" label="값" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.cancellationPolicy.open.unit" :items="unitOptions" label="단위" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.cancellationPolicy.open.from" :items="baseOptions" label="기준" density="compact" variant="outlined" />
+                      </VCol>
+                    </VRow>
+                    <h6 class="text-body-2 mb-2">마감</h6>
+                    <VRow dense>
+                      <VCol cols="4">
+                        <VTextField v-model.number="form.cancellationPolicy.close.value" type="number" label="값" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.cancellationPolicy.close.unit" :items="unitOptions" label="단위" density="compact" variant="outlined" />
+                      </VCol>
+                      <VCol cols="4">
+                        <VSelect v-model="form.cancellationPolicy.close.from" :items="baseOptions" label="기준" density="compact" variant="outlined" />
+                      </VCol>
+                    </VRow>
+                  </div>
+                </VCardText>
+              </VCard>
+            </VCol>
+          </VRow>
+
+          <!-- 예약대기 설정 -->
+          <h4 class="text-h6 mb-4 mt-6">예약대기 설정</h4>
           <VRow>
             <VCol cols="12" md="6">
-              <VSwitch v-model="form.hasReservationDeadline" label="예약 마감 사용" hide-details />
-              <VTextField
-                v-if="form.hasReservationDeadline"
-                v-model.number="form.reservationDeadlineHours"
-                type="number"
-                label="예약 마감 (시간 전)"
-                variant="outlined"
-                :rules="deadlineRules(form.hasReservationDeadline)"
-              />
+              <VSwitch v-model="form.waitlistPolicy.enabled" label="예약대기 사용" />
             </VCol>
-            <VCol cols="12" md="6">
-              <VSwitch v-model="form.hasCancellationDeadline" label="취소 마감 사용" hide-details />
+            <VCol v-if="form.waitlistPolicy.enabled" cols="12" md="6">
               <VTextField
-                v-if="form.hasCancellationDeadline"
-                v-model.number="form.cancellationDeadlineHours"
+                v-model.number="form.waitlistPolicy.autoReserveBefore.value"
                 type="number"
-                label="취소 마감 (시간 전)"
+                label="자동 예약 (분 전)"
+                suffix="분"
                 variant="outlined"
-                :rules="deadlineRules(form.hasCancellationDeadline)"
+                :rules="waitlistRules(form.waitlistPolicy.enabled)"
               />
             </VCol>
           </VRow>
@@ -215,7 +304,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Schedule } from '~/types/membership'
+import type { Schedule, Weekday, TimeSlot, ReservationPolicy, CancellationPolicy } from '~/types/membership'
 import dayjs from 'dayjs'
 
 // Props
@@ -252,8 +341,8 @@ const uniqueCodeOptions = computed(() => {
 })
 
 const displayDateRange = computed(() => {
-  if (!props.editData?.period) return ''
-  return `${dayjs(props.editData.period.startDate).format('YYYY.MM.DD')} ~ ${dayjs(props.editData.period.endDate).format('YYYY.MM.DD')}`
+  if (!form.value.dateRange) return ''
+  return `${dayjs(form.value.dateRange[0]).format('YYYY.MM.DD')} ~ ${dayjs(form.value.dateRange[1]).format('YYYY.MM.DD')}`
 })
 
 // 폼 상태
@@ -265,41 +354,50 @@ const form = ref({
   maxParticipants: null as number | null,
   location: '',
   dateRange: null as [Date, Date] | null,
-  timeType: 'allday' as 'allday' | 'custom',
-  startTime: '',
-  endTime: '',
+  timeSlots: {} as Partial<Record<Weekday, TimeSlot[]>>,
   uniqueCodeIds: [] as number[],
+  reservationPolicy: {
+    open: { value: 0, unit: 'hours', from: 'classTime' },
+    close: { value: 0, unit: 'hours', from: 'classTime' }
+  } as ReservationPolicy,
+  cancellationPolicy: {
+    open: { value: 0, unit: 'hours', from: 'classTime' },
+    close: { value: 0, unit: 'hours', from: 'classTime' }
+  } as CancellationPolicy,
+  waitlistPolicy: {
+    enabled: false,
+    autoReserveBefore: { value: 0, unit: 'minutes' as const }
+  },
   hasReservationDeadline: false,
-  reservationDeadlineHours: null as number | null,
   hasCancellationDeadline: false,
-  cancellationDeadlineHours: null as number | null,
   weekdays: [] as string[]
 })
 
 // 유효성 검사 규칙
-const timeRules = [
-  (v: string) => form.value.timeType === 'allday' || !!v || '시간을 입력하세요'
-]
+const hasAtLeastOneTimeSlot = () => Object.values(form.value.timeSlots).some(a => a && a.length)
 
 const participantRules = [
   (v: number) => form.value.maxParticipantsType === 'unlimited' || !!v || '인원 수 입력',
   (v: number) => form.value.maxParticipantsType === 'unlimited' || v > 0 || '1명 이상'
 ]
 
-const deadlineRules = (enabled: boolean) => [
-  (v: number) => !enabled || !!v || '필수 입력',
-  (v: number) => !enabled || v > 0 || '1이상'
-]
-
 // 옵션 상수들 (템플릿에서 사용)
 const weekdayOptions = ['월', '화', '수', '목', '금', '토', '일']
-const timeTypeOptions = [
-  { title: '하루종일', value: 'allday' },
-  { title: '시간 지정', value: 'custom' }
-]
 const maxParticipantsTypeOptions = [
   { title: '무제한', value: 'unlimited' },
   { title: '직접 입력', value: 'custom' }
+]
+
+// 정책 입력용 옵션
+const unitOptions = [
+  { title: '분', value: 'minutes' },
+  { title: '시간', value: 'hours' },
+  { title: '일', value: 'days' }
+]
+
+const baseOptions = [
+  { title: '수업시간', value: 'classTime' },
+  { title: '수업일', value: 'classDate' }
 ]
 
 // Methods
@@ -312,14 +410,22 @@ const resetForm = () => {
     maxParticipants: null,
     location: '',
     dateRange: null,
-    timeType: 'allday',
-    startTime: '',
-    endTime: '',
+    timeSlots: {},
     uniqueCodeIds: [],
+    reservationPolicy: {
+      open: { value: 0, unit: 'hours', from: 'classTime' },
+      close: { value: 0, unit: 'hours', from: 'classTime' }
+    } as ReservationPolicy,
+    cancellationPolicy: {
+      open: { value: 0, unit: 'hours', from: 'classTime' },
+      close: { value: 0, unit: 'hours', from: 'classTime' }
+    } as CancellationPolicy,
+    waitlistPolicy: {
+      enabled: false,
+      autoReserveBefore: { value: 0, unit: 'minutes' }
+    },
     hasReservationDeadline: false,
-    reservationDeadlineHours: null,
     hasCancellationDeadline: false,
-    cancellationDeadlineHours: null,
     weekdays: []
   }
 }
@@ -333,8 +439,10 @@ const initFormFromEditData = () => {
     maxParticipants,
     location,
     period,
-    time,
-    reservationCancelPolicy,
+    timeSlots,
+    reservationPolicy,
+    cancellationPolicy,
+    waitlistPolicy,
     uniqueCodeIds,
     ...rest 
   } = props.editData
@@ -348,14 +456,22 @@ const initFormFromEditData = () => {
     maxParticipants: maxParticipants === 'unlimited' ? null : Number(maxParticipants),
     location: location ?? '',
     dateRange: [new Date(period.startDate), new Date(period.endDate)],
-    timeType: time ? 'custom' : 'allday',
-    startTime: time?.startTime ?? '',
-    endTime: time?.endTime ?? '',
+    timeSlots: timeSlots ?? {},
     uniqueCodeIds: [...uniqueCodeIds],
-    hasReservationDeadline: !!reservationCancelPolicy?.absolute?.hours,
-    reservationDeadlineHours: reservationCancelPolicy?.absolute?.hours ?? null,
+    reservationPolicy: reservationPolicy ?? ({
+      open: { value: 0, unit: 'hours', from: 'classTime' },
+      close: { value: 0, unit: 'hours', from: 'classTime' }
+    } as ReservationPolicy),
+    cancellationPolicy: cancellationPolicy ?? ({
+      open: { value: 0, unit: 'hours', from: 'classTime' },
+      close: { value: 0, unit: 'hours', from: 'classTime' }
+    } as CancellationPolicy),
+    waitlistPolicy: waitlistPolicy ?? {
+      enabled: false,
+      autoReserveBefore: { value: 0, unit: 'minutes' }
+    },
+    hasReservationDeadline: false,
     hasCancellationDeadline: false,
-    cancellationDeadlineHours: null,
     weekdays: period.weekdays ?? []
   }
 }
@@ -377,8 +493,10 @@ const handleSubmit = async () => {
         endDate: form.value.dateRange![1].toISOString().substring(0,10),
         weekdays: form.value.weekdays.length ? form.value.weekdays : undefined
       },
-      time: form.value.timeType === 'custom' ? { startTime: form.value.startTime, endTime: form.value.endTime } : undefined,
-      reservationCancelPolicy: form.value.hasReservationDeadline ? { enabled: true, absolute: { hours: form.value.reservationDeadlineHours! } } : undefined,
+      timeSlots: Object.keys(form.value.timeSlots).length ? form.value.timeSlots : undefined,
+      reservationPolicy: form.value.hasReservationDeadline ? form.value.reservationPolicy : undefined,
+      cancellationPolicy: form.value.hasCancellationDeadline ? form.value.cancellationPolicy : undefined,
+      waitlistPolicy: form.value.waitlistPolicy.enabled ? form.value.waitlistPolicy : undefined,
       uniqueCodeIds: [...form.value.uniqueCodeIds]
     }
 
@@ -405,6 +523,28 @@ onMounted(() => {
     initFormFromEditData()
   }
 })
+
+// -----------------
+// 시간 슬롯 조작 helpers
+// -----------------
+const addTimeSlot = (day: Weekday) => {
+  if (!form.value.timeSlots[day]) {
+    form.value.timeSlots[day] = []
+  }
+  form.value.timeSlots[day]!.push({ start: '', end: '' })
+}
+
+const removeTimeSlot = (day: Weekday, idx: number) => {
+  const arr = form.value.timeSlots[day]
+  if (arr) arr.splice(idx, 1)
+}
+
+const waitlistRules = (enabled: boolean) => {
+  return [
+    (v: number) => !enabled || !!v || '필수 입력',
+    (v: number) => !enabled || v > 0 || '1 이상'
+  ]
+}
 </script>
 
 <style scoped>

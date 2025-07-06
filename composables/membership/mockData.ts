@@ -101,15 +101,10 @@ export const mockSchedules: Schedule[] = [
       endDate: '2024-02-29',
       weekdays: ['월', '수', '금']
     },
-    time: {
-      startTime: '14:00',
-      endTime: '16:00'
-    },
-    reservationCancelPolicy: {
-      enabled: true,
-      absolute: {
-        hours: 24
-      }
+    timeSlots: {
+      '월': [{ start: '14:00', end: '16:00' }],
+      '수': [{ start: '14:00', end: '16:00' }],
+      '금': [{ start: '14:00', end: '16:00' }]
     },
     uniqueCodeIds: [1],
     createdAt: '2024-01-15T09:00:00Z',
@@ -126,9 +121,9 @@ export const mockSchedules: Schedule[] = [
       endDate: '2024-12-31',
       weekdays: ['토', '일']
     },
-    time: {
-      startTime: '09:00',
-      endTime: '18:00'
+    timeSlots: {
+      '토': [{ start: '09:00', end: '18:00' }],
+      '일': [{ start: '09:00', end: '18:00' }]
     },
     uniqueCodeIds: [3],
     createdAt: '2024-01-17T14:00:00Z',

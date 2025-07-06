@@ -102,14 +102,58 @@ export interface UpdateTicketRequest extends CreateTicketRequest {
 // 3. 일정 (Schedule) - 실제 수업 및 이용 시간 정보
 // ===========================================
 
-export type ReservationCancelPolicy = {
+// -----------------
+// NEW: 시간대 & 요일
+// -----------------
+export type Weekday = '월' | '화' | '수' | '목' | '금' | '토' | '일'
+
+export interface TimeSlot {
+  /** HH:mm 형식 */
+  start: string
+  /** HH:mm 형식 */
+  end: string
+}
+
+/** 요일 → 슬롯 배열 매핑 */
+export type TimeSlots = Partial<Record<Weekday, TimeSlot[]>>
+
+// -----------------
+// NEW: 예약 / 취소 정책
+// -----------------
+
+export type TimeUnit = 'minutes' | 'hours' | 'days'
+
+/**
+ * 시작/마감 등 상대적 시점을 표현
+ *  - from: 기준 (수업시간 | 수업일)
+ *  - value: 정수
+ *  - unit: 단위 (분/시간/일)
+ */
+export interface RelativeWindow {
+  value: number
+  unit: TimeUnit
+  from: 'classTime' | 'classDate'
+}
+
+export interface ReservationPolicy {
+  open: RelativeWindow // 예약 가능 시작
+  close: RelativeWindow // 예약 마감
+}
+
+export interface CancellationPolicy {
+  open: RelativeWindow // 취소 가능 시작
+  close: RelativeWindow // 취소 마감
+}
+
+// -----------------
+// NEW: 예약대기 정책
+// -----------------
+export interface WaitlistPolicy {
   enabled: boolean
-  absolute?: {
-    hours: number // 절대값 지정 (N시간 전까지)
-  }
-  relative?: {
-    type: 'before_start' | 'before_date'
-    value: number // 상대값 지정
+  /** 자동 예약 승격 시점 (N분 전) */
+  autoReserveBefore: {
+    value: number
+    unit: 'minutes'
   }
 }
 
@@ -125,14 +169,23 @@ export interface Schedule {
     endDate: string // 필수: 일정 종료일
     weekdays?: string[] // 요일 지정 (선택)
   }
-  time?: {
-    startTime: string // 시작시간
-    endTime: string // 종료시간
-  } // 선택: 하루 중 상세 시간
-  reservationCancelPolicy?: ReservationCancelPolicy // 선택: 예약/취소 가능 시간
+  /** 요일별 시간 슬롯. 빈 객체 또는 undefined 는 "하루종일" 의미 */
+  timeSlots?: TimeSlots
+
+  /** 예약/취소 정책 */
+  reservationPolicy?: ReservationPolicy
+  cancellationPolicy?: CancellationPolicy
+
+  /** 예약 대기 정책 */
+  waitlistPolicy?: WaitlistPolicy
   uniqueCodeIds: number[] // 필수: 연결된 고유번호 ID 배열
   createdAt: string
   updatedAt: string
+  /** (Deprecated) 단일 시간대. timeSlots 사용 권장 */
+  time?: {
+    startTime: string
+    endTime: string
+  }
 }
 
 export interface CreateScheduleRequest {
@@ -146,11 +199,10 @@ export interface CreateScheduleRequest {
     endDate: string
     weekdays?: string[]
   }
-  time?: {
-    startTime: string
-    endTime: string
-  }
-  reservationCancelPolicy?: ReservationCancelPolicy
+  timeSlots?: TimeSlots
+  reservationPolicy?: ReservationPolicy
+  cancellationPolicy?: CancellationPolicy
+  waitlistPolicy?: WaitlistPolicy
   uniqueCodeIds: number[]
 }
 
