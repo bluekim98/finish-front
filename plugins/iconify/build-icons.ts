@@ -12,11 +12,16 @@
  */
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Installation: npm install --save-dev @iconify/tools @iconify/utils @iconify/json @iconify/iconify
 import { cleanupSVG, importDirectory, isEmptyColor, parseColors, runSVGO } from '@iconify/tools';
 import type { IconifyJSON } from '@iconify/types';
 import { getIcons, getIconsCSS, stringToIcon } from '@iconify/utils';
+
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Script configuration
@@ -146,7 +151,7 @@ const target = join(__dirname, 'icons.css');
    */
   if (sources.json) {
     for (let i = 0; i < sources.json.length; i++) {
-      const item = sources.json[i];
+      const item = sources.json[i]!;
 
       // Load icon set
       const filename = typeof item === 'string' ? item : item.filename;
@@ -172,7 +177,7 @@ const target = join(__dirname, 'icons.css');
    */
   if (sources.svg) {
     for (let i = 0; i < sources.svg.length; i++) {
-      const source = sources.svg[i];
+      const source = sources.svg[i]!;
 
       // Import icons
       const iconSet = await importDirectory(source.dir, {
