@@ -17,4 +17,16 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       to: '/membership',
     }"
   />
+  <VerticalNavSectionTitle
+    :item="{
+      heading: '예약 관리',
+    }"
+  />
+  <VerticalNavLink
+    :item="{
+      title: '예약 내역',
+      icon: 'ri-file-list-2-line',
+      to: '/reservation',
+    }"
+  />
 </template>
