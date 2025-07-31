@@ -10,14 +10,7 @@ type SignInRequest = {
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody<SignInRequest>(event);
 
-  // ---------------------------------------------------------------------------
-  // Development / mock mode
-  // ---------------------------------------------------------------------------
-  // When developing locally, the real authentication API may not be available.
-  // To allow quick UI testing without a backend, we short-circuit the request
-  // and return a mocked successful response whenever we are NOT in production
-  // **or** FINISH_ADMIN_API_URL is missing.
-  // ---------------------------------------------------------------------------
+  // TODO: mock 제거
   const isMock = email === 'mock@mock.com' && password === 'mock';
   if (isMock) {
     const expiresIn = 60 * 60; // 1 hour
@@ -34,7 +27,14 @@ export default defineEventHandler(async (event) => {
     };
 
     if (!event.node.res.headersSent) {
-      await setUserSession(event, sessionData);
+      await setUserSession(event, sessionData, {
+        cookie: {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: false,
+          path: '/',
+        },
+      });
     }
 
     return {

@@ -5,3 +5,4 @@ dist
 .DS-Store
 .output
 api.d.ts.*
+nuxt-artifact.tar.gz
