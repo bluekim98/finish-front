@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import cookieParser from 'cookie';
 import { UserSession } from '~/types/auth';
+import { sessionCookieOptions } from '~/server/utils/session-cookie';
 
 type SignInRequest = {
   email: string;
@@ -28,12 +29,7 @@ export default defineEventHandler(async (event) => {
 
     if (!event.node.res.headersSent) {
       await setUserSession(event, sessionData, {
-        cookie: {
-          httpOnly: true,
-          sameSite: 'lax',
-          secure: false,
-          path: '/',
-        },
+        cookie: sessionCookieOptions,
       });
     }
 
@@ -93,7 +89,9 @@ export default defineEventHandler(async (event) => {
   };
 
   if (!event.node.res.headersSent) {
-    await setUserSession(event, sessionData);
+    await setUserSession(event, sessionData, {
+      cookie: sessionCookieOptions,
+    });
   }
 
   return {
